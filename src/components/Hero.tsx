@@ -119,12 +119,18 @@ export function Hero() {
             work produced. It drifts on its own, and moving the cursor induces flow
             around it, coloured by direction like a real flow estimate. */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.25, ease: EASE }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
           className="hidden lg:block"
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden border border-(--color-border)">
+          {/* the panel scans in left-to-right on load, the same wipe the detector uses */}
+          <motion.div
+            initial={{ clipPath: 'inset(0 100% 0 0)' }}
+            animate={{ clipPath: 'inset(0 0% 0 0)' }}
+            transition={{ duration: 1, delay: 0.45, ease: EASE }}
+            className="relative aspect-[4/3] w-full overflow-hidden border border-(--color-border)"
+          >
             <FlowField className="absolute inset-0" onVectors={onCount} />
 
             <Corner at="-top-[5px] -left-[5px]" size={10} />
@@ -141,7 +147,7 @@ export function Hero() {
               <span>hue = flow direction</span>
               <span>move to induce motion</span>
             </div>
-          </div>
+          </motion.div>
 
           <p className="mt-3 flex items-start justify-between gap-6 font-mono text-[11px] leading-relaxed text-(--color-text-muted)">
             <span className="max-w-sm">

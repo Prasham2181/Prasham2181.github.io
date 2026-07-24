@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { profile, skillDomains } from '../data/profile'
 import { domainColor } from '../data/projects'
 import { Section } from './Section'
@@ -100,9 +101,15 @@ export function About() {
                   {blurb}
                 </p>
               </div>
-              <p className="flex flex-wrap gap-x-5 gap-y-2 self-start text-sm text-(--color-text-muted)">
+              <p
+                className="flex flex-wrap gap-x-5 gap-y-2 self-start text-sm text-(--color-text-muted)"
+                style={{ '--dc': domainColor[domain] } as CSSProperties}
+              >
                 {skills.map((skill) => (
-                  <span key={skill} className="transition-colors hover:text-(--color-text)">
+                  <span
+                    key={skill}
+                    className="cursor-default transition-colors duration-200 hover:text-(--dc)"
+                  >
                     {skill}
                   </span>
                 ))}

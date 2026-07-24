@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { GraduationCap } from 'lucide-react'
 import { GithubIcon, InstagramIcon, LinkedinIcon } from './icons'
 import { Section } from './Section'
@@ -43,21 +44,29 @@ export function Contact() {
           </a>
         </Rise>
 
-        <Rise delay={0.18}>
-          <div className="mt-14 flex flex-wrap gap-3">
-            {socials.map(({ label, href, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2.5 rounded-full border border-(--color-border) px-5 py-3 text-sm text-(--color-text) transition-[border-color,scale] duration-200 hover:border-(--color-text) active:scale-[0.96]"
-              >
-                <Icon size={15} /> {label}
-              </a>
-            ))}
-          </div>
-        </Rise>
+        <motion.div
+          className="mt-14 flex flex-wrap gap-3"
+          initial="hide"
+          whileInView="show"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={{ show: { transition: { staggerChildren: 0.07, delayChildren: 0.12 } } }}
+        >
+          {socials.map(({ label, href, Icon }) => (
+            <motion.a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              variants={{ hide: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+              className="inline-flex items-center gap-2.5 rounded-full border border-(--color-border) px-5 py-3 text-sm text-(--color-text) transition-colors duration-200 hover:border-(--color-text)"
+            >
+              <Icon size={15} /> {label}
+            </motion.a>
+          ))}
+        </motion.div>
 
         <Rise delay={0.24}>
           <p className="mt-10 font-mono text-xs text-(--color-text-muted)">

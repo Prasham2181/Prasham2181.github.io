@@ -1,5 +1,5 @@
-import { type PointerEvent as ReactPointerEvent, useEffect, useState } from 'react'
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, ExternalLink, X } from 'lucide-react'
 import { projects, domainFilters, domainColor, type Domain, type Project } from '../data/projects'
 import { Section } from './Section'
@@ -46,35 +46,12 @@ function Media({ project, className = '', cover = true }: { project: Project; cl
 
 /** The sticky preview panel, desktop only: shows whichever row is active. */
 function Preview({ project, onOpen }: { project: Project; onOpen: () => void }) {
-  // cursor parallax: the framed image drifts a few px against the pointer for depth
-  const px = useMotionValue(0)
-  const py = useMotionValue(0)
-  const sx = useSpring(px, { stiffness: 140, damping: 18, mass: 0.4 })
-  const sy = useSpring(py, { stiffness: 140, damping: 18, mass: 0.4 })
-  const tx = useTransform(sx, [-0.5, 0.5], [-10, 10])
-  const ty = useTransform(sy, [-0.5, 0.5], [-10, 10])
-
-  const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== 'mouse') return
-    const r = e.currentTarget.getBoundingClientRect()
-    px.set((e.clientX - r.left) / r.width - 0.5)
-    py.set((e.clientY - r.top) / r.height - 0.5)
-  }
-  const reset = () => {
-    px.set(0)
-    py.set(0)
-  }
-
   return (
     <div className="sticky top-24">
       <button type="button" onClick={onOpen} className="group block w-full text-left">
         {/* object-contain on a solid frame: these are wide side-by-side flow/vision
             frames and tall plots, so cropping them lost the point. Letterbox instead. */}
-        <div
-          onPointerMove={onMove}
-          onPointerLeave={reset}
-          className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-xl border border-(--color-border) bg-black"
-        >
+        <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-xl border border-(--color-border) bg-black">
           <AnimatePresence mode="wait">
             <motion.div
               key={project.slug}
@@ -82,13 +59,12 @@ function Preview({ project, onOpen }: { project: Project; onOpen: () => void }) 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.35, ease: EASE }}
-              style={{ x: tx, y: ty }}
               className="absolute inset-0"
             >
               <Media
                 project={project}
                 cover={false}
-                className="h-full w-full scale-[1.04] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+                className="h-full w-full transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
               />
             </motion.div>
           </AnimatePresence>
@@ -251,7 +227,15 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         <div className="grid lg:grid-cols-[0.92fr_1.08fr]">
           {/* left: the artifact and the facts */}
           <div className="flex flex-col border-b border-(--color-border) lg:border-r lg:border-b-0">
-            <Media project={project} cover={false} className="aspect-[16/10] w-full shrink-0" />
+            {/* the frame wipes in with the site's scan motif rather than a plain cut */}
+            <motion.div
+              initial={{ clipPath: 'inset(0 100% 0 0)' }}
+              animate={{ clipPath: 'inset(0 0% 0 0)' }}
+              transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
+              className="shrink-0"
+            >
+              <Media project={project} cover={false} className="aspect-[16/10] w-full" />
+            </motion.div>
 
             <div className="flex flex-1 flex-col p-6 sm:p-8">
               <DomainTags project={project} />
