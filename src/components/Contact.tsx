@@ -19,12 +19,12 @@ export function Contact() {
       index="05"
       eyebrow="Contact"
       title="Get in touch"
-      lede="Recently completed my M.S. in Robotics Engineering at WPI, and looking for full-time roles in robotics, perception and autonomy."
+      lede={`Robotics and perception engineer with an M.S. in Robotics Engineering from WPI, open to full-time roles in perception, autonomy, and robotics. Based in ${profile.location}, and open to relocating.`}
     >
       <div>
         <Words
           as="p"
-          text="Open to conversations about perception, autonomy, and robotics engineering."
+          text="Email is the best way to reach me, whether it's about a role, a collaboration, or the work itself."
           className="max-w-2xl text-lg text-pretty text-(--color-text-muted)"
         />
 
@@ -69,15 +69,15 @@ export function Contact() {
         </motion.div>
 
         <Rise delay={0.24}>
-          <p className="mt-10 font-mono text-xs text-(--color-text-muted)">
-            Also at{' '}
+          <p className="mt-12 font-mono text-xs text-(--color-text-muted)">
+            Also reachable at{' '}
             <a
               href={`mailto:${profile.schoolEmail}`}
               className="text-(--color-text) underline-offset-4 hover:underline"
             >
               {profile.schoolEmail}
-            </a>{' '}
-            · {profile.location}
+            </a>
+            .
           </p>
         </Rise>
       </div>

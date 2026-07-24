@@ -57,7 +57,7 @@ Rules that follow from that:
 
 Design tokens (colors, fonts) live in `src/index.css` as CSS custom properties, mapped into Tailwind via `@theme inline`. Dark mode toggles the `.dark` class on `<html>`; `@custom-variant dark` wires it to Tailwind's `dark:` prefix.
 
-Type roles: `--font-display` = Space Grotesk (the user chose it; earlier the site ran Archivo, and Saira before that) for the name and section titles via `font-display`; `--font-sans` = Inter for body; `--font-mono` = JetBrains Mono for labels/metadata. Section headers use the shared `SectionHeader` (+ `RegMark` "+" registration cross) from `Section.tsx`, the calibration-mark motif that also frames the hero corners.
+Type roles: `--font-display` = Bricolage Grotesque (chosen for more editorial character; the site previously ran Space Grotesk, and Archivo and Saira before that) for the name and section titles via `font-display`; `--font-sans` = Inter for body; `--font-mono` = JetBrains Mono for labels/metadata. Section headers use the shared `SectionHeader` (+ `RegMark` "+" registration cross) from `Section.tsx`, the calibration-mark motif that also frames the hero corners.
 
 ### Heading reveals (`Words`)
 

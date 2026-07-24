@@ -12,32 +12,32 @@ export function About() {
       index="01"
       eyebrow="About"
       title="I build robots that can see."
-      lede="Robotics engineer focused on 3D perception and autonomy, with an M.S. in Robotics Engineering from WPI."
+      lede="Robotics and perception engineer working across 3D vision, autonomy, and robot control, with an M.S. in Robotics Engineering from WPI."
     >
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-16">
         <div>
           <Words
             as="p"
-            text="My work covers the full perception stack: detecting and segmenting objects, estimating depth and 6-DoF pose, reconstructing 3D structure, fusing sensors, and closing the loop so a robot can act on the result."
+            text="My work spans perception and robotics: recovering geometry and semantics from cameras and LiDAR, then turning it into motion a robot can execute, from detection, depth and pose through calibration, planning, and deployment on real hardware."
             className="font-display text-xl leading-snug font-medium text-pretty text-(--color-text) sm:text-2xl"
           />
 
           <Rise delay={0.15}>
             <p className="mt-6 leading-relaxed text-pretty text-(--color-text-muted)">
-              I work across both halves of the field. Classical geometry: structure from motion,
-              camera calibration, SLAM, Kalman filtering. And learned perception: object detection,
-              optical flow, monocular depth, neural radiance fields. Recent work includes a
-              multi-stage autonomous-driving perception pipeline, LiDAR SLAM for vehicle tracking,
-              and multi-robot coordination.
+              On the perception side I work both the classical, geometric methods (structure from
+              motion, camera calibration, SLAM, Kalman filtering) and the learned ones (detection,
+              optical flow, monocular depth, neural radiance fields, vision-language models). Most
+              real systems need both.
             </p>
           </Rise>
 
           <Rise delay={0.22}>
             <p className="mt-5 leading-relaxed text-pretty text-(--color-text-muted)">
-              Alongside the research, I have taken perception into production at Tesla and Rivian:
-              vision-guided manipulation, real-time motion perception, and robot deployment. That
-              side of the work is where I learned what actually breaks between a model and a system,
-              and it is why I care about perception that holds up outside a dataset.
+              On the robotics side I turn those estimates into action: hand-eye calibration, 6-DoF
+              pose, motion planning and execution, and multi-robot coordination on FANUC and KUKA
+              arms and mobile robots. I have taken this into production at Tesla and Rivian, on
+              vision-guided manipulation, real-time motion perception, and robot deployment, which is
+              where I learned what breaks between a model and a system.
             </p>
           </Rise>
 
@@ -48,7 +48,7 @@ export function About() {
                   Focus
                 </dt>
                 <dd className="mt-2 text-sm text-(--color-text)">
-                  Perception, autonomy, 3D vision
+                  Perception, robotics, autonomy
                 </dd>
               </div>
               <div>

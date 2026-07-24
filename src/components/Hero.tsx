@@ -65,6 +65,9 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.35, ease: EASE }}
         >
+          <p className="mb-5 font-mono text-[11px] tracking-widest text-(--color-text-muted) uppercase">
+            {profile.role}
+          </p>
           <h1 className="font-display text-5xl leading-[0.92] font-bold tracking-[-0.03em] text-(--color-text) sm:text-6xl xl:text-7xl">
             <span className="sr-only">{profile.name}, robotics and perception engineer.</span>
             {[profile.first, profile.last].map((line, i) => (
@@ -173,13 +176,13 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 1 }}
           className="flex flex-col justify-between gap-2 font-mono text-[11px] text-(--color-text-muted) sm:flex-row sm:items-center"
         >
-          <span className="text-(--color-text)">{profile.role}</span>
-          <span className="flex items-center gap-6">
-            {profile.status}
+          <span className="text-(--color-text)">{profile.status}</span>
+          <span className="hidden items-center gap-3 md:flex">
+            <span>Scroll</span>
             <a
               href="#about"
               aria-label="Scroll to about"
-              className="hidden transition-colors hover:text-(--color-text) md:block"
+              className="transition-colors hover:text-(--color-text)"
             >
               <motion.span
                 className="block"

@@ -7,9 +7,9 @@ export const profile = {
   coords: '37.5483 N, 121.9886 W',
 
   role: 'Robotics & Perception Engineer',
-  punchline: 'Perception systems for robots that have to act on what they see.',
+  punchline: 'Perception and control for robots that have to act on what they see.',
   tagline:
-    'I work across 3D perception and autonomy: object detection, depth and pose estimation, SLAM, and sensor fusion, reaching into modern robot learning with vision-language models (VLMs), vision-language-action policies (VLAs), and spiking neural networks. M.S. Robotics at WPI, with perception and deployment work at Tesla and Rivian.',
+    'Perception and robotics, classical and learned: detection, depth, pose, SLAM, and sensor fusion, through motion planning, manipulation, and modern robot learning. Proven on real hardware at Tesla and Rivian, with an M.S. in Robotics Engineering at WPI.',
   status: 'M.S. Robotics Engineering, WPI · Open to full-time roles',
 
   email: 'soniprasham@gmail.com',
