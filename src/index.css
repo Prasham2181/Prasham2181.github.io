@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/600.css';
+@import '@fontsource/space-grotesk/700.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-bg: #fbfaf8;
+  --color-bg-raised: #ffffff;
+  --color-text: #1c1b1a;
+  --color-text-muted: #5b5854;
+  --color-border: #e6e3de;
+  --color-accent: #1c1b1a;
+  --color-accent-soft: #f0eeea;
+
+  --color-perception: #b91c1c;
+  --color-perception-soft: #fdecec;
+  --color-robotics: #b45309;
+  --color-robotics-soft: #fdf1e2;
+  --color-robotics-ai: #7c3aed;
+  --color-robotics-ai-soft: #f2eafe;
+}
+
+.dark {
+  --color-bg: #0d0e11;
+  --color-bg-raised: #15171b;
+  --color-text: #ededec;
+  --color-text-muted: #9a9994;
+  --color-border: #26282e;
+  --color-accent: #ededec;
+  --color-accent-soft: rgba(255, 255, 255, 0.07);
+
+  --color-perception: #f87171;
+  --color-perception-soft: rgba(248, 113, 113, 0.14);
+  --color-robotics: #f0a13d;
+  --color-robotics-soft: rgba(240, 161, 61, 0.14);
+  --color-robotics-ai: #a78bfa;
+  --color-robotics-ai-soft: rgba(167, 139, 250, 0.14);
+}
+
+@theme inline {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --color-bg: var(--color-bg);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-perception: var(--color-perception);
+  --color-perception-soft: var(--color-perception-soft);
+  --color-robotics: var(--color-robotics);
+  --color-robotics-soft: var(--color-robotics-soft);
+  --color-robotics-ai: var(--color-robotics-ai);
+  --color-robotics-ai-soft: var(--color-robotics-ai-soft);
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Lenis drives the scroll; native smooth scrolling fights it and stutters. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+::selection {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
