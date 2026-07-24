@@ -24,15 +24,30 @@ function DomainTags({ project, className = '' }: { project: Project; className?:
 }
 
 function Media({ project, className = '', cover = true }: { project: Project; className?: string; cover?: boolean }) {
+  const isVideo = /\.(mp4|webm)$/i.test(project.image)
+  const fit = cover ? 'object-cover' : 'object-contain'
   return (
     <div className={`relative overflow-hidden bg-black ${className}`}>
       {project.image ? (
-        <img
-          src={project.image}
-          alt={project.imageAlt}
-          loading="lazy"
-          className={`absolute inset-0 h-full w-full ${cover ? 'object-cover' : 'object-contain'}`}
-        />
+        isVideo ? (
+          <video
+            src={project.image}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-label={project.imageAlt}
+            className={`absolute inset-0 h-full w-full ${fit}`}
+          />
+        ) : (
+          <img
+            src={project.image}
+            alt={project.imageAlt}
+            loading="lazy"
+            className={`absolute inset-0 h-full w-full ${fit}`}
+          />
+        )
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-(--color-text)/8 to-(--color-text)/20">
           <span className="font-mono text-[10px] tracking-widest text-(--color-text-muted) uppercase">

@@ -149,9 +149,16 @@ export const projects: Project[] = [
       'Three 6 by 6 in autonomous mobile robots operating continuously in a shared arena, and a national-finalist placement for team CON-SOL-E out of more than 9,000 competing teams.',
     metrics: ['3 AMRs', '9,000+ teams', 'National finalist'],
     tech: ['C++', 'Python', 'ArUco', 'MQTT', 'ESP32 / Arduino'],
-    image: '',
-    imageAlt: '',
-    links: [{ label: 'GitHub', href: 'https://github.com/Prasham2181/Warehouse-Management-System' }],
+    image: '/projects/warehouse/highlight.mp4',
+    imageAlt:
+      'Overhead view of the 7 by 7 ft grid arena with ArUco-marked mobile robots routing parcels to the nine coloured chutes',
+    links: [
+      {
+        label: 'Watch the full run',
+        href: 'https://drive.google.com/file/d/14vDFSUkZIGEMv9P9A_TPrQmJq9Ggz9Bl/view',
+      },
+      { label: 'GitHub', href: 'https://github.com/Prasham2181/Warehouse-Management-System' },
+    ],
   },
   {
     slug: 'swarm-robots',

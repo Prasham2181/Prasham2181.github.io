@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Large source videos live off-repo (Google Drive); never commit them (GitHub caps files at 100MB)
+Assets/Warehouse Management/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
