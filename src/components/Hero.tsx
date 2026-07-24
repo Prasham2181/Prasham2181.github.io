@@ -145,8 +145,8 @@ export function Hero() {
 
           <p className="mt-3 flex items-start justify-between gap-6 font-mono text-[11px] leading-relaxed text-(--color-text-muted)">
             <span className="max-w-sm">
-              A live optical-flow field, the visualization my motion perception work at Rivian
-              produced. Move your cursor to induce flow.
+              A live optical-flow field: the same visualization my real-time motion-perception work
+              produces. Move your cursor to induce flow.
             </span>
             <span className="shrink-0 text-(--color-text)">fig. 00</span>
           </p>

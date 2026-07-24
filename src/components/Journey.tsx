@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion, useInView, useScroll, useSpring } from 'framer-motion'
 import { GraduationCap, Plus } from 'lucide-react'
 import { Section } from './Section'
 import { experience } from '../data/experience'
@@ -89,12 +89,16 @@ function LogoPlate({ item }: { item: TimelineItem }) {
 }
 
 function TimelineEntry({ item, index }: { item: TimelineItem; index: number }) {
+  const ref = useRef<HTMLLIElement>(null)
+  // lit once the row crosses the viewport centre, so nodes fill in step with the rail
+  const passed = useInView(ref, { once: true, margin: '0px 0px -50% 0px' })
   const [open, setOpen] = useState(index === 0)
   const expandable = (item.bullets?.length ?? 0) > 0
   const [from, to] = item.dates.split('–').map((s) => s.trim())
 
   return (
     <motion.li
+      ref={ref}
       initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -103,14 +107,21 @@ function TimelineEntry({ item, index }: { item: TimelineItem; index: number }) {
       data-detect={item.kind === 'work' ? 'experience.role' : 'experience.education'}
       data-family={item.kind === 'work' ? 'asset' : 'structure'}
     >
-      <span
-        aria-hidden="true"
-        className={`absolute top-10 -left-[36px] hidden h-2 w-2 rounded-full border transition-colors duration-300 md:block ${
-          open
-            ? 'border-(--color-text) bg-(--color-text)'
-            : 'border-(--color-border) bg-(--color-bg) group-hover:border-(--color-text)'
-        }`}
-      />
+      <span aria-hidden="true" className="absolute top-10 -left-[37px] hidden md:block">
+        {/* the node lights as the rail fill reaches it, then rings when the entry opens */}
+        <motion.span
+          className="block h-2.5 w-2.5 rounded-full border"
+          animate={{
+            scale: open ? 1.15 : passed ? 1 : 0.55,
+            backgroundColor: passed || open ? 'var(--color-text)' : 'var(--color-bg)',
+            borderColor: passed || open ? 'var(--color-text)' : 'var(--color-border)',
+            boxShadow: open
+              ? '0 0 0 4px var(--color-accent-soft)'
+              : '0 0 0 0 rgba(0,0,0,0)',
+          }}
+          transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+        />
+      </span>
 
       <button
         type="button"

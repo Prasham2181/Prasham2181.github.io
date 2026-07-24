@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "build:perception": "node scripts/build-perception-images.mjs",
+    "build:autopano": "node scripts/build-autopano-gif.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

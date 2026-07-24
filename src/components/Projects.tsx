@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { type PointerEvent as ReactPointerEvent, useEffect, useState } from 'react'
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { ArrowUpRight, ExternalLink, X } from 'lucide-react'
 import { projects, domainFilters, domainColor, type Domain, type Project } from '../data/projects'
 import { Section } from './Section'
@@ -46,10 +46,35 @@ function Media({ project, className = '', cover = true }: { project: Project; cl
 
 /** The sticky preview panel, desktop only: shows whichever row is active. */
 function Preview({ project, onOpen }: { project: Project; onOpen: () => void }) {
+  // cursor parallax: the framed image drifts a few px against the pointer for depth
+  const px = useMotionValue(0)
+  const py = useMotionValue(0)
+  const sx = useSpring(px, { stiffness: 140, damping: 18, mass: 0.4 })
+  const sy = useSpring(py, { stiffness: 140, damping: 18, mass: 0.4 })
+  const tx = useTransform(sx, [-0.5, 0.5], [-10, 10])
+  const ty = useTransform(sy, [-0.5, 0.5], [-10, 10])
+
+  const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') return
+    const r = e.currentTarget.getBoundingClientRect()
+    px.set((e.clientX - r.left) / r.width - 0.5)
+    py.set((e.clientY - r.top) / r.height - 0.5)
+  }
+  const reset = () => {
+    px.set(0)
+    py.set(0)
+  }
+
   return (
     <div className="sticky top-24">
       <button type="button" onClick={onOpen} className="group block w-full text-left">
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-(--color-border)">
+        {/* object-contain on a solid frame: these are wide side-by-side flow/vision
+            frames and tall plots, so cropping them lost the point. Letterbox instead. */}
+        <div
+          onPointerMove={onMove}
+          onPointerLeave={reset}
+          className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-xl border border-(--color-border) bg-black"
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={project.slug}
@@ -57,26 +82,57 @@ function Preview({ project, onOpen }: { project: Project; onOpen: () => void }) 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.35, ease: EASE }}
+              style={{ x: tx, y: ty }}
               className="absolute inset-0"
             >
-              <Media project={project} className="h-full w-full transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]" />
+              <Media
+                project={project}
+                cover={false}
+                className="h-full w-full scale-[1.04] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+              />
             </motion.div>
           </AnimatePresence>
-          <span className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 font-mono text-[10px] tracking-widest text-black uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <span className="pointer-events-none absolute right-4 bottom-4 z-10 flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 font-mono text-[10px] tracking-widest text-black uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             Open case study <ArrowUpRight size={13} />
           </span>
         </div>
       </button>
 
-      <div className="mt-5">
-        <p className="font-mono text-[11px] text-(--color-text-muted)">{project.context}</p>
-        <p className="mt-3 max-w-md text-sm leading-relaxed text-pretty text-(--color-text-muted)">
-          {project.summary}
-        </p>
-        <p className="mt-4 font-mono text-[11px] tracking-wide text-(--color-text-muted)">
-          {project.tech.slice(0, 5).join('  ·  ')}
-        </p>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={project.slug}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.3, ease: EASE }}
+          className="mt-5"
+        >
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="min-w-0 font-display text-lg leading-tight font-semibold tracking-tight text-(--color-text)">
+              {project.title}
+            </p>
+            <p className="shrink-0 font-mono text-[11px] text-(--color-text-muted) tabular-nums">
+              {project.dates.split('–').pop()?.trim()}
+            </p>
+          </div>
+          <p className="mt-1.5 font-mono text-[11px] tracking-wide text-(--color-text-muted)">
+            {project.context}
+          </p>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-pretty text-(--color-text-muted)">
+            {project.summary}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {project.tech.slice(0, 5).map((t) => (
+              <span
+                key={t}
+                className="rounded-md border border-(--color-border) px-2 py-1 font-mono text-[10px] text-(--color-text-muted)"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
@@ -140,12 +196,16 @@ function Row({
 
 function Field({ label, body }: { label: string; body: string }) {
   return (
-    <div className="border-t border-(--color-border) py-6 first:border-t-0 first:pt-0">
+    <motion.div
+      variants={{ hide: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
+      transition={{ duration: 0.5, ease: EASE }}
+      className="border-t border-(--color-border) py-6 first:border-t-0 first:pt-0"
+    >
       <p className="font-mono text-[11px] tracking-widest text-(--color-perception) uppercase">
         {label}
       </p>
       <p className="mt-2.5 text-[0.95rem] leading-relaxed text-pretty text-(--color-text)">{body}</p>
-    </div>
+    </motion.div>
   )
 }
 
@@ -250,15 +310,24 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
             </div>
           </div>
 
-          {/* right: the case study */}
-          <div className="p-6 sm:p-8 lg:max-h-[85vh] lg:overflow-y-auto">
-            <p className="mb-6 font-mono text-[11px] tracking-widest text-(--color-text-muted) uppercase">
+          {/* right: the case study, fields rising in sequence as the modal settles */}
+          <motion.div
+            initial="hide"
+            animate="show"
+            variants={{ show: { transition: { delayChildren: 0.18, staggerChildren: 0.09 } } }}
+            className="p-6 sm:p-8 lg:max-h-[85vh] lg:overflow-y-auto"
+          >
+            <motion.p
+              variants={{ hide: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
+              transition={{ duration: 0.5, ease: EASE }}
+              className="mb-6 font-mono text-[11px] tracking-widest text-(--color-text-muted) uppercase"
+            >
               Case study
-            </p>
+            </motion.p>
             <Field label="Problem" body={project.problem} />
             <Field label="Approach" body={project.approach} />
             <Field label="Result" body={project.result} />
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </motion.div>
@@ -294,16 +363,25 @@ export function Projects() {
                 key={f}
                 type="button"
                 onClick={() => pick(f)}
-                style={on && f !== 'All' ? { backgroundColor: domainColor[f] } : undefined}
-                className={`rounded-full px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition-[color,background-color,border-color,scale] duration-200 active:scale-[0.96] ${
+                className={`relative rounded-full px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition-colors duration-200 active:scale-[0.96] ${
                   on
                     ? f === 'All'
-                      ? 'bg-(--color-text) text-(--color-bg)'
+                      ? 'text-(--color-bg)'
                       : 'text-white'
                     : 'border border-(--color-border) text-(--color-text-muted) hover:border-(--color-text) hover:text-(--color-text)'
                 }`}
               >
-                {f}
+                {on && (
+                  <motion.span
+                    layoutId="filterPill"
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      backgroundColor: f === 'All' ? 'var(--color-text)' : domainColor[f],
+                    }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                  />
+                )}
+                <span className="relative z-10">{f}</span>
               </button>
             )
           })}
@@ -312,17 +390,26 @@ export function Projects() {
 
       <div className="grid gap-x-16 lg:grid-cols-[1.1fr_0.9fr]">
         <ol>
-          {visible.map((project, i) => (
-            <li key={project.slug}>
-              <Row
-                project={project}
-                n={i}
-                active={preview?.slug === project.slug}
-                onHover={() => setActive(i)}
-                onOpen={() => setSelected(project)}
-              />
-            </li>
-          ))}
+          <AnimatePresence mode="popLayout" initial={false}>
+            {visible.map((project, i) => (
+              <motion.li
+                key={project.slug}
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: EASE }}
+              >
+                <Row
+                  project={project}
+                  n={i}
+                  active={preview?.slug === project.slug}
+                  onHover={() => setActive(i)}
+                  onOpen={() => setSelected(project)}
+                />
+              </motion.li>
+            ))}
+          </AnimatePresence>
         </ol>
 
         <div className="hidden lg:block">

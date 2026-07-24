@@ -210,8 +210,9 @@ export const projects: Project[] = [
       'Seamless panoramas from the classical pipeline, with the learned models proving faster and more robust on texture-poor overlaps where feature matching degrades.',
     metrics: ['Classical vs learned', 'Supervised + unsupervised'],
     tech: ['Python', 'PyTorch', 'OpenCV', 'RANSAC'],
-    image: '/projects/autopano/hero.png',
-    imageAlt: 'Panorama stitched from multiple photos using classical homography estimation',
+    image: '/projects/autopano/pipeline.webp',
+    imageAlt:
+      'The MyAutoPano pipeline cycling through Harris corner detection, RANSAC feature matching, and the final stitched panorama',
     links: [{ label: 'GitHub', href: 'https://github.com/Prasham2181/My_AutoPano' }],
   },
   {
