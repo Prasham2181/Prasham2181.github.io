@@ -35,7 +35,7 @@ Tags `Robotics`, `Perception`, `Robotics AI`, `Controls` (`Domain` in `projects.
   - `gallery` adds more media (images or short muted `.mp4` clips) shown as a thumbnail strip in the case-study modal. Keep clips around 8 s, 960 px wide, no audio.
   - **No identifiable faces** in any project media (fall-detection demo and most front-camera MemFlow frames were skipped for this).
 - Removed by request: SafeCeil fall detection ("dumb and useless"), the RBE501 dynamics and RBE502 quadrotor cards (no media). Don't re-add.
-- Hero has no background photo (a washed desk photo read as muddy); the background is the `.page-dots` plate only.
+- Hero background: an Unsplash industrial robot-cell photo (`public/hero/`, credit in `public/hero/CREDITS.md`), faded under gradients into the page colour, Aryan-style, by user request. A washed photo of the user's own desk was tried first and read as muddy. The rest of the page uses the `.page-dots` plate.
 - Raw media for projects lives on this PC: `D:\Projects\WPI_Random_Projects` (EinsteinVision clips S*_trim, output_video, VIO talk), `Desktop/For Github/EV` (EinsteinVision phases), `Desktop/Prasham Soni/Ayna_raft_AWS/ayna-memflow` (MemFlow frames), `Desktop/WPI/Humanoid_project/renders`.
 - Experience: add to `experience` in `src/data/experience.ts` with `logo`, `headline`, `stack`, optional `stats`.
 

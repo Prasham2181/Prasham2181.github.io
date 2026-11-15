@@ -388,9 +388,10 @@ export const projects: Project[] = [
       'Straight-line Cartesian motion on the real arm, and a PD controller tuned to Kp = 0.19, Kd = 0.03 that converged quickly with minimal overshoot on all three reference steps (930 to 2000, 2180 to 1500, 930 to 1800 encoder units), logged for 10 s at 100 Hz.',
     metrics: ['PD at 100 Hz', 'Kp 0.19 · Kd 0.03', 'Jacobian pseudoinverse'],
     tech: ['ROS 2', 'Python', 'OpenManipulator-X', 'DYNAMIXEL'],
-    image: '/projects/ros2-arm/desk.webp',
-    imageAlt: 'The OpenManipulator-X arm on a desk above a calibration checkerboard',
+    image: '/projects/ros2-arm/demo.mp4',
+    imageAlt: 'The OpenManipulator-X arm moving through joint configurations above a calibration checkerboard',
     gallery: [
+      { src: '/projects/ros2-arm/desk.webp', caption: 'The OpenManipulator-X on the bench, above the calibration checkerboard.' },
       { src: '/projects/ros2-arm/hero.webp', caption: 'Pick-and-place driven by the inverse kinematics service.' },
       { src: '/projects/ros2-arm/gripper.webp', caption: 'Joint configurations used to validate forward kinematics against the measured pose.' },
       { src: '/projects/ros2-arm/pd-step.webp', caption: 'PD step response on actuator 4: 930 to 2000 encoder units.', fit: 'contain' },

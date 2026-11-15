@@ -2,9 +2,25 @@ import { ArrowRight, FileText } from 'lucide-react'
 import { profile } from '../data/profile'
 import { Rise } from './motion'
 
+/** Unsplash photo (credit in public/hero/CREDITS.md), washed back so the type stays primary */
+const HERO_IMAGE = '/hero/robot-cell-1920.webp'
+const HERO_IMAGE_SMALL = '/hero/robot-cell-960.webp'
+
 export function Hero() {
   return (
     <section id="top" className="relative w-full overflow-hidden">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <img
+          src={HERO_IMAGE}
+          srcSet={`${HERO_IMAGE_SMALL} 960w, ${HERO_IMAGE} 1920w`}
+          sizes="100vw"
+          alt=""
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover object-[65%_40%] opacity-50 dark:opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-(--color-bg)/20 via-(--color-bg)/55 to-(--color-bg)" />
+        <div className="absolute inset-0 bg-gradient-to-r from-(--color-bg)/90 via-(--color-bg)/55 to-(--color-bg)/10" />
+      </div>
       <div className="relative mx-auto w-full max-w-5xl px-5 pt-16 pb-14 sm:px-8 sm:pt-24 sm:pb-20">
       <Rise>
         <p className="mb-4 font-mono text-xs text-(--color-text-muted)">
