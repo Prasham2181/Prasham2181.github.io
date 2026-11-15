@@ -18,12 +18,11 @@ export function Contact() {
       id="contact"
       eyebrow="Contact"
       title="Get in touch"
-      lede={`Robotics and perception engineer with an M.S. in Robotics Engineering from WPI, open to full-time roles in perception, autonomy, and robotics. Based in ${profile.location}, and open to relocating.`}
+      lede={`Robotics and vision systems engineer at Tesla on the Optimus program, with an M.S. in Robotics Engineering from WPI. Based in ${profile.location}.`}
     >
       <div>
         <p className="max-w-2xl text-base text-pretty text-(--color-text-muted)">
-          Email is the best way to reach me, whether it's about a role, a collaboration, or the work
-          itself.
+          Email is the best way to reach me, whether it's about a collaboration, a question about the work, or something worth building.
         </p>
 
         {/* the email is the whole call to action, so it gets display scale */}
