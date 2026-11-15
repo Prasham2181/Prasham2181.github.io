@@ -108,11 +108,8 @@ export const projects: Project[] = [
       'Per-frame motion classification in real time with annotated flow visualizations and event logs, giving a clean signal for downtime tracking and motion-event subclassification from cameras alone.',
     metrics: ['Dual-camera', 'MemFlowNet', 'Real-time on AWS'],
     tech: ['PyTorch', 'MemFlowNet', 'OpenCV', 'CUDA', 'AWS'],
-    image: '/projects/memflow/overlay.webp',
-    imageAlt: 'A tugger seen from an onboard camera, its MemFlow optical flow overlaid in colour, labelled with the motion state',
-    gallery: [
-      { src: '/projects/memflow/hero.webp', caption: 'Annotated output: each camera frame beside its Middlebury-coloured flow field.', fit: 'contain' },
-    ],
+    image: '/projects/memflow/lead-anim.webp',
+    imageAlt: 'Plant-floor footage from an onboard camera with the MemFlow optical flow tinted over the moving tugger, labelled with the motion state',
     links: [],
   },
   {
@@ -194,7 +191,8 @@ export const projects: Project[] = [
       'Novel-view renders of held-out viewpoints, evaluated on PSNR and SSIM against ground truth.',
     metrics: ['PSNR / SSIM evaluated', 'Hierarchical sampling'],
     tech: ['PyTorch', 'NumPy', 'Volumetric rendering'],
-    image: '/projects/nerf/hero.webp',
+    image: '/projects/nerf/lead.webp',
+    fit: 'contain',
     imageAlt: 'NeRF-rendered turntable view of a synthetic scene',
     links: [{ label: 'GitHub', href: 'https://github.com/Prasham2181/NeRF' }],
   },

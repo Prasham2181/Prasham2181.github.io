@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { AnimatePresence, motion, useInView, useScroll, useSpring } from 'framer-motion'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ChevronDown, GraduationCap } from 'lucide-react'
 import { Section } from './Section'
 import { experience } from '../data/experience'
@@ -35,7 +35,8 @@ function startStamp(dates: string): number {
 
 const items: TimelineItem[] = [
   ...experience.map((job): TimelineItem => ({
-    key: job.company,
+    // company alone is not unique (two Tesla roles), so key on the role too
+    key: `${job.company}|${job.role}`,
     kind: 'work',
     title: job.role,
     subtitle: job.company,
@@ -49,7 +50,7 @@ const items: TimelineItem[] = [
     bullets: job.bullets,
   })),
   ...education.map((ed): TimelineItem => ({
-    key: ed.school,
+    key: `${ed.school}|${ed.degree}`,
     kind: 'education',
     title: ed.degree,
     subtitle: ed.school,
@@ -85,43 +86,74 @@ function LogoPlate({ item }: { item: TimelineItem }) {
   )
 }
 
-function TimelineEntry({ item, first }: { item: TimelineItem; first: boolean }) {
-  const ref = useRef<HTMLLIElement>(null)
-  // lit once the entry crosses the middle of the viewport, in step with the rail fill
-  const passed = useInView(ref, { once: true, margin: '0px 0px -45% 0px' })
-  const [open, setOpen] = useState(first)
+/* ---- the route -------------------------------------------------------- */
+
+const ROUTE_W = 64 // px, width of the trail column
+const X = [18, 46] // the trail swings between these two x positions
+const NODE_Y = 27 // px from the top of a row to its waypoint
+
+/** The trail runs top to bottom, most recent first. Each row draws its own leg. */
+function legPath(i: number, last: boolean, h: number): string {
+  const x = X[i % 2]
+  const nx = X[(i + 1) % 2]
+  if (last) return `M${x} 0 L${x} ${NODE_Y}`
+  const d = Math.max(24, (h - NODE_Y) * 0.55)
+  return `M${x} 0 L${x} ${NODE_Y} C${x} ${NODE_Y + d} ${nx} ${h - d} ${nx} ${h}`
+}
+
+function RouteRow({ item, index, last }: { item: TimelineItem; index: number; last: boolean }) {
+  const rowRef = useRef<HTMLLIElement>(null)
+  const [h, setH] = useState(220)
+  const [open, setOpen] = useState(index === 0)
   const hasBullets = (item.bullets?.length ?? 0) > 0
+  const x = X[index % 2]
+
+  // the leg is drawn in pixels, so re-measure when the row grows (details open)
+  useLayoutEffect(() => {
+    const el = rowRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setH(Math.round(el.getBoundingClientRect().height)))
+    ro.observe(el)
+    setH(Math.round(el.getBoundingClientRect().height))
+    return () => ro.disconnect()
+  }, [])
+
+  // each leg fills crimson as the row scrolls through the middle of the screen
+  const { scrollYProgress } = useScroll({ target: rowRef, offset: ['start 72%', 'end 45%'] })
+  const fill = useSpring(scrollYProgress, { stiffness: 90, damping: 26, restDelta: 0.001 })
+  const dot = useTransform(scrollYProgress, [0, 0.08], [0, 1])
+
+  const d = legPath(index, last, h)
+  const edu = item.kind === 'education'
 
   return (
-    <li ref={ref} className="relative pb-10 pl-10 last:pb-0">
-      <motion.span
-        aria-hidden="true"
-        className="absolute top-4 left-[6px] h-[11px] w-[11px] rounded-full border-2"
-        initial={false}
-        animate={{
-          scale: passed ? 1 : 0.6,
-          backgroundColor: passed ? 'var(--color-text)' : 'var(--color-bg)',
-          borderColor: passed ? 'var(--color-text)' : 'var(--color-border)',
-          boxShadow: passed ? '0 0 0 4px var(--color-accent-soft)' : '0 0 0 0 rgba(0,0,0,0)',
-        }}
-        transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-      />
+    <li ref={rowRef} className="relative grid grid-cols-[4rem_minmax(0,1fr)] gap-x-4 pb-10 last:pb-4">
+      <div className="relative" style={{ width: ROUTE_W }} aria-hidden="true">
+        <svg width={ROUTE_W} height={h} viewBox={`0 0 ${ROUTE_W} ${h}`} className="absolute inset-0 overflow-visible">
+          <path d={d} fill="none" stroke="var(--color-text-muted)" strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="2 6" strokeLinecap="round" />
+          <motion.path d={d} fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinecap="round" style={{ pathLength: fill }} />
+        </svg>
+        <span
+          className={`absolute grid h-3.5 w-3.5 place-items-center border-2 border-(--color-text-muted)/60 bg-(--color-bg) ${edu ? 'rotate-45 rounded-[3px]' : 'rounded-full'}`}
+          style={{ left: x - 7, top: NODE_Y - 7 }}
+        >
+          <motion.span style={{ opacity: dot, scale: dot }} className={`h-2 w-2 bg-(--color-brand) ${edu ? 'rounded-[1px]' : 'rounded-full'}`} />
+        </span>
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, x: -14 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: '0px 0px -15% 0px' }}
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        className="min-w-0"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="flex items-start gap-4">
           <LogoPlate item={item} />
           <div className="min-w-0 flex-1">
             <div className="flex flex-col gap-x-4 gap-y-0.5 sm:flex-row sm:items-baseline sm:justify-between">
-              <h3 className="text-base leading-snug font-semibold text-(--color-text) sm:text-lg">
-                {item.title}
-              </h3>
-              <span className="shrink-0 font-mono text-[12px] text-(--color-text-muted) tabular-nums">
-                {item.dates}
-              </span>
+              <h3 className="text-base leading-snug font-semibold text-(--color-text) sm:text-lg">{item.title}</h3>
+              <span className="shrink-0 font-mono text-[12px] text-(--color-text-muted) tabular-nums">{item.dates}</span>
             </div>
             <p className="mt-0.5 text-sm text-(--color-text-muted)">
               <span className="font-medium text-(--color-text)">{item.subtitle}</span> · {item.location}
@@ -131,26 +163,18 @@ function TimelineEntry({ item, first }: { item: TimelineItem; first: boolean }) 
         </div>
 
         {item.headline && (
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pretty text-(--color-text-muted)">
-            {item.headline}
-          </p>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pretty text-(--color-text-muted)">{item.headline}</p>
         )}
 
         {(item.stats || item.stack) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {item.stats?.map((stat) => (
-              <span
-                key={stat}
-                className="rounded-md bg-(--color-accent-soft) px-2 py-1 font-mono text-[11px] text-(--color-text) tabular-nums"
-              >
+              <span key={stat} className="rounded-md bg-(--color-accent-soft) px-2 py-1 font-mono text-[11px] text-(--color-text) tabular-nums">
                 {stat}
               </span>
             ))}
             {item.stack?.map((tool) => (
-              <span
-                key={tool}
-                className="rounded-md border border-(--color-border) px-2 py-1 font-mono text-[11px] text-(--color-text-muted)"
-              >
+              <span key={tool} className="rounded-md border border-(--color-border) px-2 py-1 font-mono text-[11px] text-(--color-text-muted)">
                 {tool}
               </span>
             ))}
@@ -178,14 +202,8 @@ function TimelineEntry({ item, first }: { item: TimelineItem; first: boolean }) 
                   className="max-w-3xl space-y-2 overflow-hidden"
                 >
                   {item.bullets!.map((bullet, i) => (
-                    <li
-                      key={i}
-                      className="relative pl-4 text-sm leading-relaxed text-pretty text-(--color-text-muted) first:mt-3"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="absolute top-[0.6rem] left-0 h-1 w-1 rounded-full bg-(--color-text-muted)"
-                      />
+                    <li key={i} className="relative pl-4 text-sm leading-relaxed text-pretty text-(--color-text-muted) first:mt-3">
+                      <span aria-hidden="true" className="absolute top-[0.6rem] left-0 h-1 w-1 rounded-full bg-(--color-text-muted)" />
                       {bullet}
                     </li>
                   ))}
@@ -199,115 +217,7 @@ function TimelineEntry({ item, first }: { item: TimelineItem; first: boolean }) 
   )
 }
 
-
-const NOW_STAMP = new Date().getFullYear() * 12 + new Date().getMonth()
-
-function endStamp(dates: string): number {
-  const all = [...dates.matchAll(/([A-Z][a-z]{2})\s+(\d{4})/g)]
-  if (/present/i.test(dates) || all.length < 2) return /present/i.test(dates) ? NOW_STAMP : startStamp(dates) + 1
-  const m = all[all.length - 1]
-  return Number(m[2]) * 12 + (MONTHS[m[1]] ?? 0)
-}
-
-/**
- * Career as an elevation profile. The horizontal axis is time; the height of
- * each peak is the number of months spent in that role (square-rooted so a
- * two-year degree does not flatten a five-month internship).
- */
-function TrailProfile() {
-  const W = 1000
-  const H = 230
-  const base = 190
-  const pad = 24
-  const spans = items.map((it) => ({ it, a: startStamp(it.dates), b: endStamp(it.dates) }))
-  const lo = Math.min(...spans.map((x) => x.a))
-  const hi = Math.max(...spans.map((x) => x.b))
-  const xAt = (t: number) => pad + ((t - lo) / (hi - lo)) * (W - pad * 2)
-  const maxMonths = Math.max(...spans.map((x) => x.b - x.a))
-  const hOf = (months: number) => 24 + (Math.sqrt(months) / Math.sqrt(maxMonths)) * 112
-
-  const bump = (a: number, b: number, h: number) => {
-    const x0 = xAt(a)
-    const x1 = xAt(b)
-    const steps = 24
-    let d = `M${x0.toFixed(1)} ${base}`
-    for (let i = 0; i <= steps; i++) {
-      const u = i / steps
-      const y = base - h * (0.5 - 0.5 * Math.cos(u * 2 * Math.PI)) * 1
-      d += ` L${(x0 + (x1 - x0) * u).toFixed(1)} ${y.toFixed(1)}`
-    }
-    return d + ` L${x1.toFixed(1)} ${base}`
-  }
-
-  const years: number[] = []
-  for (let y = Math.ceil(lo / 12); y <= Math.floor(hi / 12); y++) years.push(y)
-
-  return (
-    <figure className="mb-10 hidden sm:block">
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Career elevation profile: one peak per role or degree, taller for longer">
-        <line x1={pad} y1={base} x2={W - pad} y2={base} stroke="var(--color-border)" strokeWidth="1" />
-        {years.map((y) => (
-          <g key={y}>
-            <line x1={xAt(y * 12)} y1={base} x2={xAt(y * 12)} y2={base + 5} stroke="var(--color-text-muted)" strokeWidth="1" />
-            <text x={xAt(y * 12)} y={base + 20} textAnchor="middle" className="fill-(--color-text-muted)" style={{ font: '10px var(--font-mono)' }}>
-              {y}
-            </text>
-          </g>
-        ))}
-        {spans
-          .filter((x) => x.it.kind === 'education')
-          .map(({ it, a, b }) => (
-            <motion.path
-              key={it.key}
-              d={bump(a, b, hOf(b - a))}
-              fill="var(--color-accent-soft)"
-              stroke="var(--color-text-muted)"
-              strokeWidth="1"
-              strokeDasharray="4 3"
-              initial={{ pathLength: 0 }}
-              whileInView={{ pathLength: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-            />
-          ))}
-        {spans
-          .filter((x) => x.it.kind === 'work')
-          .map(({ it, a, b }, i) => {
-            const h = hOf(b - a)
-            const cx = (xAt(a) + xAt(b)) / 2
-            const ly = base - h - 10 - (i % 2) * 15
-            return (
-              <g key={it.key}>
-                <motion.path
-                  d={bump(a, b, h)}
-                  fill="color-mix(in srgb, var(--color-brand) 14%, transparent)"
-                  stroke="var(--color-brand)"
-                  strokeWidth="1.6"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                />
-                <circle cx={cx} cy={base - h} r="3" fill="var(--color-brand)" />
-                <text x={cx} y={ly} textAnchor="middle" className="fill-(--color-text)" style={{ font: '500 11px var(--font-sans)' }}>
-                  {it.subtitle.replace(' Automation', '').replace(' Industries', '').replace(' Technologies', '').replace(' Systems', '')}
-                </text>
-              </g>
-            )
-          })}
-      </svg>
-      <figcaption className="mt-1 font-mono text-[11px] text-(--color-text-muted)">
-        Elevation profile: red peaks are jobs, dashed are degrees. Height is months in the role.
-      </figcaption>
-    </figure>
-  )
-}
-
 export function Journey() {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 60%', 'end 55%'] })
-  const fill = useSpring(scrollYProgress, { stiffness: 90, damping: 26, restDelta: 0.001 })
-
   return (
     <Section
       id="journey"
@@ -315,21 +225,21 @@ export function Journey() {
       title="Work and education"
       lede="Robotics and computer vision roles across autonomous systems, industrial robotics and R&D, alongside an M.S. in Robotics Engineering."
     >
-      <TrailProfile />
-      <div ref={ref} className="relative max-w-4xl">
-        {/* the rail fills as the section is read */}
-        <div aria-hidden="true" className="absolute top-4 bottom-3 left-[11px] w-px bg-(--color-border)">
-          <motion.div
-            style={{ scaleY: fill }}
-            className="h-full w-full origin-top bg-gradient-to-b from-(--color-perception) via-(--color-robotics) to-(--color-robotics-ai)"
-          />
-        </div>
-        <ol>
-          {items.map((item, i) => (
-            <TimelineEntry key={item.key} item={item} first={i === 0} />
-          ))}
-        </ol>
-      </div>
+      <p className="mb-6 flex items-center gap-2 font-mono text-[11px] tracking-wider text-(--color-text-muted) uppercase">
+        <svg width="10" height="9" viewBox="0 0 10 9" fill="currentColor" aria-hidden="true" className="text-(--color-brand)">
+          <path d="M5 0 10 9H0z" />
+        </svg>
+        The route so far, most recent first
+        <span className="ml-1 inline-flex items-center gap-1.5 normal-case">
+          <span className="h-2 w-2 rounded-full border border-(--color-text-muted)/70" /> work
+          <span className="ml-1.5 h-2 w-2 rotate-45 rounded-[2px] border border-(--color-text-muted)/70" /> education
+        </span>
+      </p>
+      <ol className="max-w-4xl">
+        {items.map((item, i) => (
+          <RouteRow key={item.key} item={item} index={i} last={i === items.length - 1} />
+        ))}
+      </ol>
     </Section>
   )
 }
