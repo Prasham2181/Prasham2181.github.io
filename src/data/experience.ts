@@ -49,7 +49,7 @@ export const experience: ExperienceEntry[] = [
       'Built a vision-guided robotic manipulation pipeline for FANUC arms using Keyence multi-camera systems: 3D object localization, camera-to-robot frame transformations, and motion execution.',
       'Served as Controls Integration Lead for the R2 Front-End Module line, owning controls architecture, PLC and HMI validation, and safety systems.',
     ],
-    stack: ['RAFT / MemFlowNet', 'PyTorch', 'CUDA', 'AWS', 'Multi-camera 3D'],
+    stack: ['RAFT / MemFlowNet', 'PyTorch', 'CUDA', 'AWS', 'FANUC', 'Keyence vision'],
   },
   {
     company: 'Keepsake Automation',

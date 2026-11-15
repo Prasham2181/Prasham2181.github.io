@@ -32,6 +32,14 @@ export function Nav() {
               {link.label}
             </a>
           ))}
+          <a
+            href={profile.links.resume}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-md border border-(--color-border) px-2.5 py-1 text-[13px] text-(--color-text) transition-colors hover:border-(--color-text)"
+          >
+            Résumé
+          </a>
           <div className="flex items-center gap-1 md:border-l md:border-(--color-border) md:pl-4">
             <a href={profile.links.github} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconLink}>
               <GithubIcon size={15} />

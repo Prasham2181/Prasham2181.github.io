@@ -1,4 +1,4 @@
-import { ArrowRight, FileDown } from 'lucide-react'
+import { ArrowRight, FileText } from 'lucide-react'
 import { profile } from '../data/profile'
 import { Rise } from './motion'
 
@@ -28,10 +28,11 @@ export function Hero() {
           </a>
           <a
             href={profile.links.resume}
-            download
+            target="_blank"
+            rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-lg border border-(--color-border) px-5 py-2.5 text-sm font-medium text-(--color-text) transition-[border-color,scale] duration-150 hover:border-(--color-text) active:scale-[0.96]"
           >
-            <FileDown size={15} /> Résumé
+            <FileText size={15} /> View résumé
           </a>
         </div>
         <p className="mt-8 font-mono text-xs text-(--color-text-muted)">{profile.status}</p>
