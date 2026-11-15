@@ -1,25 +1,23 @@
 @import 'tailwindcss';
-@import '@fontsource/bricolage-grotesque/500.css';
-@import '@fontsource/bricolage-grotesque/600.css';
-@import '@fontsource/bricolage-grotesque/700.css';
-@import '@fontsource/bricolage-grotesque/800.css';
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
+@import '@fontsource/geist/300.css';
+@import '@fontsource/geist/400.css';
+@import '@fontsource/geist/500.css';
+@import '@fontsource/geist/600.css';
+@import '@fontsource/geist/700.css';
 @import '@fontsource/jetbrains-mono/400.css';
-@import '@fontsource/jetbrains-mono/500.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --color-bg: #fbfaf8;
+  --color-bg: #ffffff;
   --color-bg-raised: #ffffff;
-  --color-text: #1c1b1a;
-  --color-text-muted: #5b5854;
-  --color-border: #e6e3de;
-  --color-accent: #1c1b1a;
-  --color-accent-soft: #f0eeea;
+  --color-text: #0a0a0a;
+  --color-text-muted: #404040;
+  --color-border: #e8e8e8;
+  --color-accent: #0a0a0a;
+  --color-accent-soft: #f0f0f0;
+  --color-brand: #960d26;
+  --color-dots: #d4b4ba;
 
   --color-perception: #b91c1c;
   --color-perception-soft: #fdecec;
@@ -27,6 +25,8 @@
   --color-robotics-soft: #fdf1e2;
   --color-robotics-ai: #7c3aed;
   --color-robotics-ai-soft: #f2eafe;
+  --color-controls: #0f766e;
+  --color-controls-soft: #e3f4f1;
 }
 
 .dark {
@@ -37,6 +37,8 @@
   --color-border: #26282e;
   --color-accent: #ededec;
   --color-accent-soft: rgba(255, 255, 255, 0.07);
+  --color-brand: #fb7185;
+  --color-dots: #5a3a42;
 
   --color-perception: #f87171;
   --color-perception-soft: rgba(248, 113, 113, 0.14);
@@ -44,17 +46,20 @@
   --color-robotics-soft: rgba(240, 161, 61, 0.14);
   --color-robotics-ai: #a78bfa;
   --color-robotics-ai-soft: rgba(167, 139, 250, 0.14);
+  --color-controls: #2dd4bf;
+  --color-controls-soft: rgba(45, 212, 191, 0.14);
 }
 
 @theme inline {
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-display: 'Geist', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --color-bg: var(--color-bg);
   --color-bg-raised: var(--color-bg-raised);
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
+  --color-brand: var(--color-brand);
   --color-accent: var(--color-accent);
   --color-accent-soft: var(--color-accent-soft);
   --color-perception: var(--color-perception);
@@ -63,6 +68,8 @@
   --color-robotics-soft: var(--color-robotics-soft);
   --color-robotics-ai: var(--color-robotics-ai);
   --color-robotics-ai-soft: var(--color-robotics-ai-soft);
+  --color-controls: var(--color-controls);
+  --color-controls-soft: var(--color-controls-soft);
 }
 
 html {
@@ -104,4 +111,20 @@ h3 {
   outline: 2px solid var(--color-text);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* Fixed dot plate behind everything, fading out from the top of the viewport. */
+.page-dots {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.35;
+  background-image: radial-gradient(var(--color-dots) 1px, transparent 1px);
+  background-size: 3px 3px;
+  -webkit-mask-image: radial-gradient(80vh at 50% 0%, #000 0, transparent 100%);
+  mask-image: radial-gradient(80vh at 50% 0%, #000 0, transparent 100%);
+}
+.dark .page-dots {
+  opacity: 0.5;
 }

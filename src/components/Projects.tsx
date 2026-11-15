@@ -3,18 +3,24 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, ExternalLink, X } from 'lucide-react'
 import { projects, domainFilters, domainColor, type Domain, type Project } from '../data/projects'
 import { Section } from './Section'
-import { Rise } from './motion'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
+const domainSoft: Record<Domain, string> = {
+  Perception: 'var(--color-perception-soft)',
+  Robotics: 'var(--color-robotics-soft)',
+  'Robotics AI': 'var(--color-robotics-ai-soft)',
+  Controls: 'var(--color-controls-soft)',
+}
+
 function DomainTags({ project, className = '' }: { project: Project; className?: string }) {
   return (
-    <span className={`flex flex-wrap gap-x-3 gap-y-1 ${className}`}>
+    <span className={`flex flex-wrap gap-1.5 ${className}`}>
       {project.domains.map((domain) => (
         <span
           key={domain}
-          style={{ color: domainColor[domain] }}
-          className="font-mono text-[10px] font-medium tracking-widest whitespace-nowrap uppercase"
+          style={{ color: domainColor[domain], backgroundColor: domainSoft[domain] }}
+          className="rounded-full px-2 py-0.5 text-[11px] font-medium whitespace-nowrap"
         >
           {domain}
         </span>
@@ -59,128 +65,41 @@ function Media({ project, className = '', cover = true }: { project: Project; cl
   )
 }
 
-/** The sticky preview panel, desktop only: shows whichever row is active. */
-function Preview({ project, onOpen }: { project: Project; onOpen: () => void }) {
-  return (
-    <div className="sticky top-24">
-      <button type="button" onClick={onOpen} className="group block w-full text-left">
-        {/* object-contain on a solid frame: these are wide side-by-side flow/vision
-            frames and tall plots, so cropping them lost the point. Letterbox instead. */}
-        <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-xl border border-(--color-border) bg-black">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={project.slug}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35, ease: EASE }}
-              className="absolute inset-0"
-            >
-              <Media
-                project={project}
-                cover={false}
-                className="h-full w-full transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-              />
-            </motion.div>
-          </AnimatePresence>
-          <span className="pointer-events-none absolute right-4 bottom-4 z-10 flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 font-mono text-[10px] tracking-widest text-black uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            Open case study <ArrowUpRight size={13} />
-          </span>
-        </div>
-      </button>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={project.slug}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.3, ease: EASE }}
-          className="mt-5"
-        >
-          <div className="flex items-baseline justify-between gap-4">
-            <p className="min-w-0 font-display text-lg leading-tight font-semibold tracking-tight text-(--color-text)">
-              {project.title}
-            </p>
-            <p className="shrink-0 font-mono text-[11px] text-(--color-text-muted) tabular-nums">
-              {project.dates.split('–').pop()?.trim()}
-            </p>
-          </div>
-          <p className="mt-1.5 font-mono text-[11px] tracking-wide text-(--color-text-muted)">
-            {project.context}
-          </p>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-pretty text-(--color-text-muted)">
-            {project.summary}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {project.tech.slice(0, 5).map((t) => (
-              <span
-                key={t}
-                className="rounded-md border border-(--color-border) px-2 py-1 font-mono text-[10px] text-(--color-text-muted)"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  )
-}
-
-/** One row in the index. */
-function Row({
-  project,
-  n,
-  active,
-  onHover,
-  onOpen,
-}: {
-  project: Project
-  n: number
-  active: boolean
-  onHover: () => void
-  onOpen: () => void
-}) {
+/** One project card: media on top, then tags, title, summary, stack. */
+function Card({ project, onOpen }: { project: Project; onOpen: () => void }) {
   return (
     <button
       type="button"
-      onMouseEnter={onHover}
-      onFocus={onHover}
       onClick={onOpen}
-      data-detect={`project.${project.slug}`}
-      data-family={n % 2 === 0 ? 'vehicle' : 'asset'}
-      className="group grid w-full grid-cols-[2rem_1fr_auto] items-baseline gap-4 border-t border-(--color-border) py-6 text-left last:border-b sm:gap-6 sm:py-7"
+      className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-bg-raised) text-left transition-[border-color,scale] duration-150 hover:border-(--color-text-muted) active:scale-[0.99]"
     >
-      <span
-        className={`font-mono text-xs tabular-nums transition-colors ${
-          active ? 'text-(--color-text)' : 'text-(--color-text-muted)'
-        }`}
-      >
-        {String(n + 1).padStart(2, '0')}
-      </span>
-
-      <span className="min-w-0">
-        <span className="block font-display text-xl leading-tight font-semibold tracking-tight text-balance text-(--color-text) transition-transform duration-300 group-hover:translate-x-1 sm:text-2xl">
+      <Media project={project} cover={false} className="aspect-[16/10] w-full border-b border-(--color-border)" />
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-center justify-between gap-3">
+          <DomainTags project={project} />
+          <span className="shrink-0 font-mono text-[11px] text-(--color-text-muted) tabular-nums">
+            {project.dates.split('–').pop()?.trim()}
+          </span>
+        </div>
+        <h3 className="mt-3 flex items-start justify-between gap-3 text-lg leading-snug font-semibold tracking-tight text-(--color-text)">
           {project.title}
-        </span>
-        <DomainTags project={project} className="mt-2" />
-        <span className="mt-2 block max-w-md text-sm leading-relaxed text-pretty text-(--color-text-muted) lg:hidden">
-          {project.summary}
-        </span>
-      </span>
-
-      <span className="hidden shrink-0 items-center gap-3 font-mono text-[11px] text-(--color-text-muted) sm:flex">
-        <span className="tabular-nums">{project.dates.split('–').pop()?.trim()}</span>
-        <ArrowUpRight
-          size={16}
-          className={`transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
-            active ? 'opacity-100 text-(--color-text)' : 'opacity-40'
-          }`}
-        />
-      </span>
-
-      <Media project={project} className="col-span-3 mt-4 aspect-[16/10] w-full rounded-lg lg:hidden" />
+          <ArrowUpRight
+            size={16}
+            className="mt-1 shrink-0 text-(--color-text-muted) transition-[color,translate] duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--color-brand)"
+          />
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-pretty text-(--color-text-muted)">{project.summary}</p>
+        <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+          {project.tech.slice(0, 4).map((t) => (
+            <span
+              key={t}
+              className="rounded-md bg-(--color-accent-soft) px-2 py-1 font-mono text-[10px] text-(--color-text-muted)"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
     </button>
   )
 }
@@ -192,7 +111,7 @@ function Field({ label, body }: { label: string; body: string }) {
       transition={{ duration: 0.5, ease: EASE }}
       className="border-t border-(--color-border) py-6 first:border-t-0 first:pt-0"
     >
-      <p className="font-mono text-[11px] tracking-widest text-(--color-perception) uppercase">
+      <p className="font-mono text-[11px] tracking-widest text-(--color-brand) uppercase">
         {label}
       </p>
       <p className="mt-2.5 text-[0.95rem] leading-relaxed text-pretty text-(--color-text)">{body}</p>
@@ -217,7 +136,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-md sm:p-6"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/60 p-3 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={project.title}
@@ -242,15 +161,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         <div className="grid lg:grid-cols-[0.92fr_1.08fr]">
           {/* left: the artifact and the facts */}
           <div className="flex flex-col border-b border-(--color-border) lg:border-r lg:border-b-0">
-            {/* the frame wipes in with the site's scan motif rather than a plain cut */}
-            <motion.div
-              initial={{ clipPath: 'inset(0 100% 0 0)' }}
-              animate={{ clipPath: 'inset(0 0% 0 0)' }}
-              transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
-              className="shrink-0"
-            >
-              <Media project={project} cover={false} className="aspect-[16/10] w-full" />
-            </motion.div>
+            <Media project={project} cover={false} className="aspect-[16/10] w-full shrink-0" />
 
             <div className="flex flex-1 flex-col p-6 sm:p-8">
               <DomainTags project={project} />
@@ -335,86 +246,44 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
 
 export function Projects() {
   const [filter, setFilter] = useState<Domain | 'All'>('All')
-  const [active, setActive] = useState(0)
   const [selected, setSelected] = useState<Project | null>(null)
   const visible = filter === 'All' ? projects : projects.filter((p) => p.domains.includes(filter))
-  const preview = visible[Math.min(active, visible.length - 1)] ?? visible[0]
-
-  const pick = (f: Domain | 'All') => {
-    setFilter(f)
-    setActive(0)
-  }
 
   return (
     <Section
       id="projects"
-      index="03"
-      eyebrow="Work"
-      title="Projects & research"
-      lede="Reconstruction, learned perception, state estimation and multi-robot systems. Hover a title to preview it, select it to open the full case study."
+      eyebrow="Projects"
+      title="Projects & Research"
+      lede="Reconstruction, learned perception, state estimation and multi-robot systems. Select a project to read the case study."
     >
-      <Rise>
-        <div className="-mt-6 mb-10 flex flex-wrap items-center gap-2">
-          {(['All', ...domainFilters] as const).map((f) => {
-            const on = filter === f
-            return (
-              <button
-                key={f}
-                type="button"
-                onClick={() => pick(f)}
-                className={`relative rounded-full px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition-colors duration-200 active:scale-[0.96] ${
-                  on
-                    ? f === 'All'
-                      ? 'text-(--color-bg)'
-                      : 'text-white'
-                    : 'border border-(--color-border) text-(--color-text-muted) hover:border-(--color-text) hover:text-(--color-text)'
-                }`}
-              >
-                {on && (
-                  <motion.span
-                    layoutId="filterPill"
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      backgroundColor: f === 'All' ? 'var(--color-text)' : domainColor[f],
-                    }}
-                    transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                  />
-                )}
-                <span className="relative z-10">{f}</span>
-              </button>
-            )
-          })}
-        </div>
-      </Rise>
-
-      <div className="grid gap-x-16 lg:grid-cols-[1.1fr_0.9fr]">
-        <ol>
-          <AnimatePresence mode="popLayout" initial={false}>
-            {visible.map((project, i) => (
-              <motion.li
-                key={project.slug}
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: EASE }}
-              >
-                <Row
-                  project={project}
-                  n={i}
-                  active={preview?.slug === project.slug}
-                  onHover={() => setActive(i)}
-                  onOpen={() => setSelected(project)}
-                />
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </ol>
-
-        <div className="hidden lg:block">
-          {preview && <Preview project={preview} onOpen={() => setSelected(preview)} />}
-        </div>
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        {(['All', ...domainFilters] as const).map((f) => {
+          const on = filter === f
+          return (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFilter(f)}
+              aria-pressed={on}
+              className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-150 active:scale-[0.96] ${
+                on
+                  ? 'border-(--color-text) bg-(--color-text) text-(--color-bg)'
+                  : 'border-(--color-border) text-(--color-text-muted) hover:border-(--color-text-muted) hover:text-(--color-text)'
+              }`}
+            >
+              {f}
+            </button>
+          )
+        })}
       </div>
+
+      <ul className="grid gap-4 md:grid-cols-2">
+        {visible.map((project) => (
+          <li key={project.slug}>
+            <Card project={project} onOpen={() => setSelected(project)} />
+          </li>
+        ))}
+      </ul>
 
       <AnimatePresence>
         {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { GraduationCap } from 'lucide-react'
 import { GithubIcon, InstagramIcon, LinkedinIcon } from './icons'
 import { Section } from './Section'
-import { Rise, Words } from './motion'
+import { Rise } from './motion'
 import { profile } from '../data/profile'
 
 const socials = [
@@ -16,28 +16,24 @@ export function Contact() {
   return (
     <Section
       id="contact"
-      index="05"
       eyebrow="Contact"
       title="Get in touch"
       lede={`Robotics and perception engineer with an M.S. in Robotics Engineering from WPI, open to full-time roles in perception, autonomy, and robotics. Based in ${profile.location}, and open to relocating.`}
     >
       <div>
-        <Words
-          as="p"
-          text="Email is the best way to reach me, whether it's about a role, a collaboration, or the work itself."
-          className="max-w-2xl text-lg text-pretty text-(--color-text-muted)"
-        />
+        <p className="max-w-2xl text-base text-pretty text-(--color-text-muted)">
+          Email is the best way to reach me, whether it's about a role, a collaboration, or the work
+          itself.
+        </p>
 
         {/* the email is the whole call to action, so it gets display scale */}
         <Rise delay={0.1}>
           <a
             href={`mailto:${profile.email}`}
-            data-detect="contact.email"
-            data-family="signal"
-            className="group mt-12 block w-fit max-w-full"
+            className="group mt-8 block w-fit max-w-full"
             aria-label={`Email ${profile.email}`}
           >
-            <span className="block font-display text-[clamp(1.75rem,6.2vw,5.5rem)] leading-none font-bold tracking-tight break-all text-(--color-text)">
+            <span className="block text-[clamp(1.5rem,5vw,3rem)] leading-none font-semibold tracking-tight break-all text-(--color-text)">
               {profile.email}
             </span>
             <span className="mt-4 block h-px w-full origin-left scale-x-0 bg-(--color-text) transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />

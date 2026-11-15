@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView, useScroll, useSpring } from 'framer-motion'
-import { GraduationCap, Plus } from 'lucide-react'
+import { ChevronDown, GraduationCap } from 'lucide-react'
 import { Section } from './Section'
 import { experience } from '../data/experience'
 import { education } from '../data/profile'
@@ -63,192 +63,165 @@ const items: TimelineItem[] = [
 ].sort((a, b) => startStamp(b.dates) - startStamp(a.dates))
 
 /**
- * The logo plate.
- *
- * Company marks are dark-on-transparent artwork at unrelated aspect ratios: a
- * square Tesla T next to a 4.8:1 Keepsake wordmark. They are mounted on a
- * permanent white plate (the only way dark marks survive dark mode), in a
- * landscape box wide enough for a wordmark, centred with object-contain, and
- * scaled per logo (`logoScale`) so they all carry the same optical weight.
+ * Company marks are dark-on-transparent artwork at unrelated aspect ratios, so
+ * each sits on a permanent white plate (dark marks survive dark mode) and is
+ * scaled per logo (`logoScale`) to carry the same optical weight.
  */
 function LogoPlate({ item }: { item: TimelineItem }) {
   return (
-    <span className="grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-xl border border-(--color-border) bg-white px-3 transition-[border-color,box-shadow,transform] duration-300 group-hover:-translate-y-0.5 group-hover:border-(--color-text) group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
+    <span className="grid h-12 w-[4.5rem] shrink-0 place-items-center overflow-hidden rounded-lg border border-(--color-border) bg-white px-2">
       {item.logo ? (
         <img
           src={item.logo}
           alt=""
+          loading="lazy"
           style={{ transform: `scale(${item.logoScale ?? 1})` }}
-          className="max-h-10 max-w-full object-contain"
+          className="max-h-8 max-w-full object-contain"
         />
       ) : (
-        <GraduationCap size={28} className="text-(--color-robotics-ai)" strokeWidth={1.5} />
+        <GraduationCap size={22} className="text-(--color-text-muted)" strokeWidth={1.5} />
       )}
     </span>
   )
 }
 
-function TimelineEntry({ item, index }: { item: TimelineItem; index: number }) {
+function TimelineEntry({ item, first }: { item: TimelineItem; first: boolean }) {
   const ref = useRef<HTMLLIElement>(null)
-  // lit once the row crosses the viewport centre, so nodes fill in step with the rail
-  const passed = useInView(ref, { once: true, margin: '0px 0px -50% 0px' })
-  const [open, setOpen] = useState(index === 0)
-  const expandable = (item.bullets?.length ?? 0) > 0
-  const [from, to] = item.dates.split('–').map((s) => s.trim())
+  // lit once the entry crosses the middle of the viewport, in step with the rail fill
+  const passed = useInView(ref, { once: true, margin: '0px 0px -45% 0px' })
+  const [open, setOpen] = useState(first)
+  const hasBullets = (item.bullets?.length ?? 0) > 0
 
   return (
-    <motion.li
-      ref={ref}
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.25) }}
-      className="group relative border-t border-(--color-border) last:border-b"
-      data-detect={item.kind === 'work' ? 'experience.role' : 'experience.education'}
-      data-family={item.kind === 'work' ? 'asset' : 'structure'}
-    >
-      <span aria-hidden="true" className="absolute top-10 -left-[37px] hidden md:block">
-        {/* the node lights as the rail fill reaches it, then rings when the entry opens */}
-        <motion.span
-          className="block h-2.5 w-2.5 rounded-full border"
-          animate={{
-            scale: open ? 1.15 : passed ? 1 : 0.55,
-            backgroundColor: passed || open ? 'var(--color-text)' : 'var(--color-bg)',
-            borderColor: passed || open ? 'var(--color-text)' : 'var(--color-border)',
-            boxShadow: open
-              ? '0 0 0 4px var(--color-accent-soft)'
-              : '0 0 0 0 rgba(0,0,0,0)',
-          }}
-          transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-        />
-      </span>
-
-      <button
-        type="button"
-        onClick={() => expandable && setOpen((v) => !v)}
-        disabled={!expandable}
-        aria-expanded={expandable ? open : undefined}
-        className={`grid w-full grid-cols-[1fr_auto] items-start gap-x-6 gap-y-4 py-8 text-left sm:grid-cols-[8.5rem_minmax(0,1fr)_auto] ${
-          expandable ? 'cursor-pointer' : 'cursor-default'
-        }`}
+    <li ref={ref} className="relative pb-10 pl-10 last:pb-0">
+      <motion.span
+        aria-hidden="true"
+        className="absolute top-4 left-[6px] h-[11px] w-[11px] rounded-full border-2"
+        initial={false}
+        animate={{
+          scale: passed ? 1 : 0.6,
+          backgroundColor: passed ? 'var(--color-text)' : 'var(--color-bg)',
+          borderColor: passed ? 'var(--color-text)' : 'var(--color-border)',
+          boxShadow: passed ? '0 0 0 4px var(--color-accent-soft)' : '0 0 0 0 rgba(0,0,0,0)',
+        }}
+        transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+      />
+      <motion.div
+        initial={{ opacity: 0, x: -14 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: '0px 0px -15% 0px' }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       >
-        <span className="col-span-2 flex items-baseline gap-2 pt-1 font-mono text-xs tabular-nums sm:col-span-1 sm:flex-col sm:gap-1">
-          <span className="text-(--color-text)">{from}</span>
-          <span className="text-(--color-text-muted)">{to ?? ''}</span>
-        </span>
-
-        <span className="flex min-w-0 items-start gap-5">
+        <div className="flex items-start gap-4">
           <LogoPlate item={item} />
-
-          <span className="min-w-0 flex-1">
-            <span className="block font-display text-xl leading-tight font-semibold tracking-tight text-(--color-text) [text-wrap:balance] sm:text-2xl">
-              {item.title}
-            </span>
-            <span className="mt-1 block text-sm text-(--color-text-muted)">
-              {item.subtitle} · {item.location}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-x-4 gap-y-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+              <h3 className="text-base leading-snug font-semibold text-(--color-text) sm:text-lg">
+                {item.title}
+              </h3>
+              <span className="shrink-0 font-mono text-[12px] text-(--color-text-muted) tabular-nums">
+                {item.dates}
+              </span>
+            </div>
+            <p className="mt-0.5 text-sm text-(--color-text-muted)">
+              <span className="font-medium text-(--color-text)">{item.subtitle}</span> · {item.location}
               {item.gpa && <span className="ml-2 font-mono text-xs">GPA {item.gpa}</span>}
-            </span>
+            </p>
+          </div>
+        </div>
 
-            {item.headline && (
-              <span className="mt-3.5 block max-w-2xl text-sm leading-relaxed text-pretty text-(--color-text)">
-                {item.headline}
-              </span>
-            )}
-
-            {(item.stats || item.stack) && (
-              <span className="mt-4 flex flex-wrap items-center gap-1.5">
-                {item.stats?.map((stat) => (
-                  <span
-                    key={stat}
-                    className="rounded-md bg-(--color-accent-soft) px-2 py-1 font-mono text-[11px] text-(--color-text) tabular-nums"
-                  >
-                    {stat}
-                  </span>
-                ))}
-                {item.stack?.map((tool) => (
-                  <span
-                    key={tool}
-                    className="rounded-md border border-(--color-border) px-2 py-1 font-mono text-[11px] text-(--color-text-muted)"
-                  >
-                    {tool}
-                  </span>
-                ))}
-              </span>
-            )}
-          </span>
-        </span>
-
-        {expandable && (
-          <motion.span
-            animate={{ rotate: open ? 45 : 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-(--color-border) text-(--color-text-muted) transition-colors duration-300 group-hover:border-(--color-text) group-hover:text-(--color-text)"
-            aria-hidden="true"
-          >
-            <Plus size={15} />
-          </motion.span>
+        {item.headline && (
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-pretty text-(--color-text-muted)">
+            {item.headline}
+          </p>
         )}
-      </button>
 
-      <AnimatePresence initial={false}>
-        {expandable && open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
-            {/* aligned to the copy column: date column + gap + plate + gap */}
-            <ul className="space-y-3.5 pb-9 sm:ml-[8.5rem] sm:pl-[7.25rem]">
-              {item.bullets!.map((bullet, i) => (
-                <li
-                  key={i}
-                  className="relative max-w-3xl pl-5 text-sm leading-relaxed text-pretty text-(--color-text-muted)"
+        {(item.stats || item.stack) && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {item.stats?.map((stat) => (
+              <span
+                key={stat}
+                className="rounded-md bg-(--color-accent-soft) px-2 py-1 font-mono text-[11px] text-(--color-text) tabular-nums"
+              >
+                {stat}
+              </span>
+            ))}
+            {item.stack?.map((tool) => (
+              <span
+                key={tool}
+                className="rounded-md border border-(--color-border) px-2 py-1 font-mono text-[11px] text-(--color-text-muted)"
+              >
+                {tool}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {hasBullets && (
+          <>
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              className="mt-3 inline-flex items-center gap-1 text-[13px] text-(--color-text-muted) transition-colors hover:text-(--color-brand)"
+            >
+              {open ? 'Hide details' : 'Show details'}
+              <ChevronDown size={14} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence initial={false}>
+              {open && (
+                <motion.ul
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="max-w-3xl space-y-2 overflow-hidden"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-[0.55rem] left-0 h-1 w-1 rounded-full bg-(--color-text-muted)"
-                  />
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+                  {item.bullets!.map((bullet, i) => (
+                    <li
+                      key={i}
+                      className="relative pl-4 text-sm leading-relaxed text-pretty text-(--color-text-muted) first:mt-3"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="absolute top-[0.6rem] left-0 h-1 w-1 rounded-full bg-(--color-text-muted)"
+                      />
+                      {bullet}
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </>
         )}
-      </AnimatePresence>
-    </motion.li>
+      </motion.div>
+    </li>
   )
 }
 
 export function Journey() {
   const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 65%', 'end 65%'] })
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 60%', 'end 55%'] })
   const fill = useSpring(scrollYProgress, { stiffness: 90, damping: 26, restDelta: 0.001 })
 
   return (
     <Section
       id="journey"
-      index="02"
       eyebrow="Experience"
-      title="Career trajectory"
-      lede="Robotics and computer vision roles across autonomous systems, industrial robotics and R&D, alongside an M.S. in Robotics Engineering. Select an entry to expand it."
+      title="Work and education"
+      lede="Robotics and computer vision roles across autonomous systems, industrial robotics and R&D, alongside an M.S. in Robotics Engineering."
     >
-      <div ref={ref} className="relative md:pl-8">
+      <div ref={ref} className="relative max-w-4xl">
         {/* the rail fills as the section is read */}
-        <div
-          aria-hidden="true"
-          className="absolute top-0 bottom-0 left-0 hidden w-px bg-(--color-border) md:block"
-        >
+        <div aria-hidden="true" className="absolute top-4 bottom-3 left-[11px] w-px bg-(--color-border)">
           <motion.div
             style={{ scaleY: fill }}
             className="h-full w-full origin-top bg-gradient-to-b from-(--color-perception) via-(--color-robotics) to-(--color-robotics-ai)"
           />
         </div>
-
         <ol>
           {items.map((item, i) => (
-            <TimelineEntry key={item.key} item={item} index={i} />
+            <TimelineEntry key={item.key} item={item} first={i === 0} />
           ))}
         </ol>
       </div>
