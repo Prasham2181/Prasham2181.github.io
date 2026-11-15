@@ -10,7 +10,7 @@ export const profile = {
   punchline: 'Making robots slightly less confident and considerably more correct.',
   tagline:
     'Perception and robotics, classical and learned: detection, depth, pose, SLAM, and sensor fusion, through motion planning, manipulation, and modern robot learning. Proven on real hardware at Tesla and Rivian, with an M.S. in Robotics Engineering at WPI.',
-  status: 'M.S. Robotics Engineering, WPI · Open to full-time roles',
+  status: 'Robotics & Vision Systems Engineer, Tesla (Optimus Program)',
 
   email: 'soniprasham@gmail.com',
   schoolEmail: 'psoni@wpi.edu',
@@ -19,7 +19,7 @@ export const profile = {
     github: 'https://github.com/Prasham2181',
     scholar: 'https://scholar.google.com/citations?user=sby1CVoAAAAJ',
     instagram: 'https://www.instagram.com/prasham_soni/',
-    resume: '/Prasham_Soni_Resume.pdf?v=2026-04-28',
+    resume: '/Prasham_Soni_Resume.pdf?v=2026-11-14',
   },
   interests: ['Traveling', 'Volleyball', 'Chess', 'Gaming'],
 }
@@ -60,6 +60,7 @@ export const skillDomains = [
       'Camera calibration',
       'LiDAR SLAM',
       'Keyence / Mech-Mind vision',
+      'Defect and inspection imaging',
     ],
   },
   {
@@ -114,6 +115,7 @@ export const toolbox = [
   'OpenCV',
   'CUDA',
   'AWS',
+  'FFmpeg',
   'Git',
   'Linux',
 ]

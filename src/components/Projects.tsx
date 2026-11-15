@@ -289,9 +289,15 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
             >
               Case study
             </motion.p>
-            <Field label="Problem" body={project.problem} />
-            <Field label="Approach" body={project.approach} />
-            <Field label="Result" body={project.result} />
+            {project.problem || project.approach || project.result ? (
+              <>
+                {project.problem && <Field label="Problem" body={project.problem} />}
+                {project.approach && <Field label="Approach" body={project.approach} />}
+                {project.result && <Field label="Result" body={project.result} />}
+              </>
+            ) : (
+              <Field label="Overview" body={project.summary} />
+            )}
           </motion.div>
         </div>
       </motion.div>

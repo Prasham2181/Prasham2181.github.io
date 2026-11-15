@@ -52,6 +52,22 @@ export const projects: Project[] = [
     links: [{ label: 'GitHub', href: 'https://github.com/Prasham2181/Kolby_Ava_humanoid' }],
   },
   {
+    slug: 'fanuc-handling',
+    title: 'FANUC Arm Part Handling',
+    summary:
+      'A FANUC arm with a pneumatic gripper picking and placing a curved part against a foam fixture, recorded on the cell.',
+    dates: '2026',
+    context: 'Side project · FANUC',
+    domains: ['Robotics'],
+    problem: '',
+    approach: '',
+    result: '',
+    tech: ['FANUC', 'Pneumatic gripper'],
+    image: '/projects/fanuc-side/demo.mp4',
+    imageAlt: 'A yellow FANUC arm with a pneumatic gripper handling a curved white part held against a purple foam fixture',
+    links: [],
+  },
+  {
     slug: 'drone-nav',
     title: 'Drone Navigation: EKF, Particle Filter and INS',
     summary:
