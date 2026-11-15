@@ -9,13 +9,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --color-bg: #ffffff;
+  --color-bg: #fbfaf6;
   --color-bg-raised: #ffffff;
   --color-text: #0a0a0a;
   --color-text-muted: #404040;
-  --color-border: #e8e8e8;
+  --color-border: #e4dfd3;
   --color-accent: #0a0a0a;
-  --color-accent-soft: #f0f0f0;
+  --color-accent-soft: #f1eee6;
   --color-brand: #960d26;
 
   --color-perception: #b91c1c;
@@ -109,4 +109,20 @@ h3 {
   outline: 2px solid var(--color-text);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* Topographic contour map behind the whole page: one static SVG, fixed, no scripting. */
+.trail-bg {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('/trail/contours.svg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.38;
+}
+.dark .trail-bg {
+  opacity: 0.12;
+  filter: invert(1);
 }

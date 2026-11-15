@@ -199,6 +199,110 @@ function TimelineEntry({ item, first }: { item: TimelineItem; first: boolean }) 
   )
 }
 
+
+const NOW_STAMP = new Date().getFullYear() * 12 + new Date().getMonth()
+
+function endStamp(dates: string): number {
+  const all = [...dates.matchAll(/([A-Z][a-z]{2})\s+(\d{4})/g)]
+  if (/present/i.test(dates) || all.length < 2) return /present/i.test(dates) ? NOW_STAMP : startStamp(dates) + 1
+  const m = all[all.length - 1]
+  return Number(m[2]) * 12 + (MONTHS[m[1]] ?? 0)
+}
+
+/**
+ * Career as an elevation profile. The horizontal axis is time; the height of
+ * each peak is the number of months spent in that role (square-rooted so a
+ * two-year degree does not flatten a five-month internship).
+ */
+function TrailProfile() {
+  const W = 1000
+  const H = 230
+  const base = 190
+  const pad = 24
+  const spans = items.map((it) => ({ it, a: startStamp(it.dates), b: endStamp(it.dates) }))
+  const lo = Math.min(...spans.map((x) => x.a))
+  const hi = Math.max(...spans.map((x) => x.b))
+  const xAt = (t: number) => pad + ((t - lo) / (hi - lo)) * (W - pad * 2)
+  const maxMonths = Math.max(...spans.map((x) => x.b - x.a))
+  const hOf = (months: number) => 24 + (Math.sqrt(months) / Math.sqrt(maxMonths)) * 112
+
+  const bump = (a: number, b: number, h: number) => {
+    const x0 = xAt(a)
+    const x1 = xAt(b)
+    const steps = 24
+    let d = `M${x0.toFixed(1)} ${base}`
+    for (let i = 0; i <= steps; i++) {
+      const u = i / steps
+      const y = base - h * (0.5 - 0.5 * Math.cos(u * 2 * Math.PI)) * 1
+      d += ` L${(x0 + (x1 - x0) * u).toFixed(1)} ${y.toFixed(1)}`
+    }
+    return d + ` L${x1.toFixed(1)} ${base}`
+  }
+
+  const years: number[] = []
+  for (let y = Math.ceil(lo / 12); y <= Math.floor(hi / 12); y++) years.push(y)
+
+  return (
+    <figure className="mb-10 hidden sm:block">
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Career elevation profile: one peak per role or degree, taller for longer">
+        <line x1={pad} y1={base} x2={W - pad} y2={base} stroke="var(--color-border)" strokeWidth="1" />
+        {years.map((y) => (
+          <g key={y}>
+            <line x1={xAt(y * 12)} y1={base} x2={xAt(y * 12)} y2={base + 5} stroke="var(--color-text-muted)" strokeWidth="1" />
+            <text x={xAt(y * 12)} y={base + 20} textAnchor="middle" className="fill-(--color-text-muted)" style={{ font: '10px var(--font-mono)' }}>
+              {y}
+            </text>
+          </g>
+        ))}
+        {spans
+          .filter((x) => x.it.kind === 'education')
+          .map(({ it, a, b }) => (
+            <motion.path
+              key={it.key}
+              d={bump(a, b, hOf(b - a))}
+              fill="var(--color-accent-soft)"
+              stroke="var(--color-text-muted)"
+              strokeWidth="1"
+              strokeDasharray="4 3"
+              initial={{ pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+            />
+          ))}
+        {spans
+          .filter((x) => x.it.kind === 'work')
+          .map(({ it, a, b }, i) => {
+            const h = hOf(b - a)
+            const cx = (xAt(a) + xAt(b)) / 2
+            const ly = base - h - 10 - (i % 2) * 15
+            return (
+              <g key={it.key}>
+                <motion.path
+                  d={bump(a, b, h)}
+                  fill="color-mix(in srgb, var(--color-brand) 14%, transparent)"
+                  stroke="var(--color-brand)"
+                  strokeWidth="1.6"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                />
+                <circle cx={cx} cy={base - h} r="3" fill="var(--color-brand)" />
+                <text x={cx} y={ly} textAnchor="middle" className="fill-(--color-text)" style={{ font: '500 11px var(--font-sans)' }}>
+                  {it.subtitle.replace(' Automation', '').replace(' Industries', '').replace(' Technologies', '').replace(' Systems', '')}
+                </text>
+              </g>
+            )
+          })}
+      </svg>
+      <figcaption className="mt-1 font-mono text-[11px] text-(--color-text-muted)">
+        Elevation profile: red peaks are jobs, dashed are degrees. Height is months in the role.
+      </figcaption>
+    </figure>
+  )
+}
+
 export function Journey() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 60%', 'end 55%'] })
@@ -211,6 +315,7 @@ export function Journey() {
       title="Work and education"
       lede="Robotics and computer vision roles across autonomous systems, industrial robotics and R&D, alongside an M.S. in Robotics Engineering."
     >
+      <TrailProfile />
       <div ref={ref} className="relative max-w-4xl">
         {/* the rail fills as the section is read */}
         <div aria-hidden="true" className="absolute top-4 bottom-3 left-[11px] w-px bg-(--color-border)">

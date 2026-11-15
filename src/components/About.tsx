@@ -119,11 +119,6 @@ export function About() {
         </Rise>
       </div>
 
-      <Rise delay={0.1}>
-        <p className="mt-8 font-mono text-xs tracking-wide text-(--color-text-muted)">
-          Outside work: {profile.interests.map((s) => s.toLowerCase()).join(' · ')}.
-        </p>
-      </Rise>
     </Section>
   )
 }

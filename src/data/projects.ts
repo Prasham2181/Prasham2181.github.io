@@ -67,7 +67,7 @@ export const projects: Project[] = [
       'The EKF gave the lowest RMSE on four of the eight trajectories and the particle filter won the other four at high particle counts, a clear accuracy versus compute trade-off. The INS EKF stayed stable across sequences once speed, bearing and barometer updates were added. A UKF variant went numerically unstable, and the report traces why.',
     metrics: ['8 trajectories', 'EKF vs PF', '15-state INS'],
     tech: ['Python', 'NumPy', 'OpenCV', 'EKF', 'Particle filter'],
-    image: '/projects/drone-nav/hero.webp',
+    image: '/projects/drone-nav/lead.webp',
     fit: 'contain',
     imageAlt: '3D trajectory plot of the EKF drone pose estimate against Vicon ground truth',
     gallery: [
@@ -92,7 +92,7 @@ export const projects: Project[] = [
       'Per-frame motion classification in real time with annotated flow visualizations and event logs, giving a clean signal for downtime tracking and motion-event subclassification from cameras alone.',
     metrics: ['Dual-camera', 'MemFlowNet', 'Real-time on AWS'],
     tech: ['PyTorch', 'MemFlowNet', 'OpenCV', 'CUDA', 'AWS'],
-    image: '/projects/memflow/overlay-anim.webp',
+    image: '/projects/memflow/overlay.webp',
     imageAlt: 'A tugger seen from an onboard camera, its MemFlow optical flow overlaid in colour, labelled with the motion state',
     gallery: [
       { src: '/projects/memflow/hero.webp', caption: 'Annotated output: each camera frame beside its Middlebury-coloured flow field.', fit: 'contain' },
@@ -148,7 +148,7 @@ export const projects: Project[] = [
       'A consistent 3D point cloud with recovered camera poses, with reprojection error minimised across all registered views.',
     metrics: ['Implemented from scratch', 'Bundle-adjusted'],
     tech: ['Python', 'OpenCV', 'NumPy', 'SciPy'],
-    image: '/projects/sfm/hero.png',
+    image: '/projects/sfm/lead.webp',
     fit: 'contain',
     imageAlt: 'Final 3D point cloud reconstruction with camera poses after bundle adjustment',
     gallery: [
@@ -265,7 +265,7 @@ export const projects: Project[] = [
       'The fused estimate tracks ground truth more closely than either input across the full run.',
     metrics: ['GPS + odometry fusion'],
     tech: ['MATLAB', 'State estimation'],
-    image: '/projects/ekf/hero.png',
+    image: '/projects/ekf/lead.webp',
     fit: 'contain',
     imageAlt:
       'Trajectory plot comparing GPS observations, odometry-only estimate, EKF localization, and ground truth',
@@ -362,7 +362,7 @@ export const projects: Project[] = [
       'Newton-Raphson was fastest and travelled least in joint space; I-DLS and SVD-DLS made the most conservative joint movements; PSO was slowest and moved most, but was the only solver still producing valid solutions when motion was restricted to yaw alone. I-DLS came out as the best compromise for real-time teleoperation.',
     metrics: ['4 IK solvers', 'Meta Quest 2', 'Unity + ROS + MATLAB'],
     tech: ['MATLAB', 'ROS', 'Unity', 'Meta Quest 2', 'PSO'],
-    image: '/projects/ik-benchmark/hero.webp',
+    image: '/projects/ik-benchmark/lead.webp',
     fit: 'contain',
     imageAlt:
       'Bar charts comparing completion time, cumulative joint distance and weighted joint-angle change for Newton-Raphson, I-DLS, SVD-DLS and PSO',

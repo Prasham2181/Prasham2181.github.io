@@ -6,10 +6,12 @@ import { Journey } from './components/Journey'
 import { Projects } from './components/Projects'
 import { Recognition } from './components/Recognition'
 import { Contact } from './components/Contact'
+import { OffTrail } from './components/OffTrail'
 
 function App() {
   return (
     <MotionConfig reducedMotion="user">
+      <div className="trail-bg" aria-hidden="true" />
       <div className="min-h-screen">
         <Nav />
         <main>
@@ -18,12 +20,13 @@ function App() {
           <Journey />
           <Projects />
           <Recognition />
+          <OffTrail />
           <Contact />
         </main>
         <footer className="mx-auto flex w-full max-w-5xl flex-col gap-2 border-t border-(--color-border) px-5 py-8 font-mono text-xs text-(--color-text-muted) sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <span className="tabular-nums">© {new Date().getFullYear()} Prasham Soni</span>
           <a href="#top" className="transition-colors hover:text-(--color-brand)">
-            Back to top
+            Back to the trailhead
           </a>
         </footer>
       </div>
