@@ -2,21 +2,9 @@ import { ArrowRight, FileDown } from 'lucide-react'
 import { profile } from '../data/profile'
 import { Rise } from './motion'
 
-/** a real photo of my own work, washed back so the type stays primary */
-const HERO_IMAGE = '/projects/ros2-arm/hero.webp'
-
 export function Hero() {
   return (
     <section id="top" className="relative w-full overflow-hidden">
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <img
-          src={HERO_IMAGE}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_40%] opacity-40 grayscale-[30%] dark:opacity-25"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-(--color-bg)/30 via-(--color-bg)/70 to-(--color-bg)" />
-        <div className="absolute inset-0 bg-gradient-to-r from-(--color-bg)/85 via-(--color-bg)/40 to-(--color-bg)/10" />
-      </div>
       <div className="relative mx-auto w-full max-w-5xl px-5 pt-16 pb-14 sm:px-8 sm:pt-24 sm:pb-20">
       <Rise>
         <p className="mb-4 font-mono text-xs text-(--color-text-muted)">

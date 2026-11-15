@@ -17,6 +17,10 @@ export type Project = {
   tech: string[]
   image: string
   imageAlt: string
+  /** 'contain' for figures (plots, diagrams) that must not be cropped; photos default to cover */
+  fit?: 'cover' | 'contain'
+  /** extra media for the case study, shown as a thumbnail strip in the modal */
+  gallery?: { src: string; caption: string; fit?: 'cover' | 'contain' }[]
   links: { label: string; href: string }[]
 }
 
@@ -37,8 +41,14 @@ export const projects: Project[] = [
       'All 64 squares reachable with both arms, and the board read at mAP50 0.986 with 64/64 occupancy and every move of a scripted game recovered from the camera alone. A morphology study showed that re-mounting the claw takes reachability from 57/64 to 64/64, and that moving the board beats adding a wrist servo. A cross-simulator audit found the three arm models agree to 0.001 mm.',
     metrics: ['mAP50 0.986', '64/64 squares', 'Genesis + Isaac Sim'],
     tech: ['Python', 'Genesis', 'Isaac Sim', 'YOLO11', 'PPO', 'Stockfish'],
-    image: '/projects/humanoid/hero.webp',
-    imageAlt: 'The Koalby humanoid in simulation playing chess at a pedestal board',
+    image: '/projects/humanoid/close.webp',
+    imageAlt: 'The Koalby humanoid in simulation, reaching for a piece on the chessboard',
+    gallery: [
+      { src: '/projects/humanoid/hero.webp', caption: 'A full game: Stockfish chooses, the humanoid moves the pieces.' },
+      { src: '/projects/humanoid/board.webp', caption: 'Both arms reach all 64 squares; every path is swept against piece poses before it runs.' },
+      { src: '/projects/humanoid/topdown.webp', caption: 'Synthetic top-down render used to train the YOLO11n board reader.' },
+      { src: '/projects/humanoid/urdf.webp', caption: 'The Koalby URDF: 28 links, 27 joints.', fit: 'contain' },
+    ],
     links: [{ label: 'GitHub', href: 'https://github.com/Prasham2181/Kolby_Ava_humanoid' }],
   },
   {
@@ -58,7 +68,12 @@ export const projects: Project[] = [
     metrics: ['8 trajectories', 'EKF vs PF', '15-state INS'],
     tech: ['Python', 'NumPy', 'OpenCV', 'EKF', 'Particle filter'],
     image: '/projects/drone-nav/hero.webp',
+    fit: 'contain',
     imageAlt: '3D trajectory plot of the EKF drone pose estimate against Vicon ground truth',
+    gallery: [
+      { src: '/projects/drone-nav/pnp-collage.webp', caption: 'PnP observation model: trajectory, position error and orientation against Vicon.', fit: 'contain' },
+      { src: '/projects/drone-nav/ins-trajectory.webp', caption: 'GNSS-aided strapdown INS: filter output against GNSS fixes.', fit: 'contain' },
+    ],
     links: [],
   },
   {
@@ -77,9 +92,11 @@ export const projects: Project[] = [
       'Per-frame motion classification in real time with annotated flow visualizations and event logs, giving a clean signal for downtime tracking and motion-event subclassification from cameras alone.',
     metrics: ['Dual-camera', 'MemFlowNet', 'Real-time on AWS'],
     tech: ['PyTorch', 'MemFlowNet', 'OpenCV', 'CUDA', 'AWS'],
-    image: '/projects/memflow/hero.webp',
-    imageAlt:
-      'A warehouse tugger seen from an onboard camera beside its MemFlow optical-flow output, labelled with its motion state',
+    image: '/projects/memflow/overlay.webp',
+    imageAlt: 'A tugger seen from an onboard camera, its MemFlow optical flow overlaid in colour, labelled with the motion state',
+    gallery: [
+      { src: '/projects/memflow/hero.webp', caption: 'Annotated output: each camera frame beside its Middlebury-coloured flow field.', fit: 'contain' },
+    ],
     links: [],
   },
   {
@@ -98,9 +115,16 @@ export const projects: Project[] = [
       'Driving footage reconstructs frame by frame into a clean 3D visualization with lanes, vehicles, pedestrians, traffic lights and signs, closely tracking the source video.',
     metrics: ['Monocular input', '6 model stages', 'Blender scene render'],
     tech: ['PyTorch', 'YOLOv11 / YOLO3D', 'Detic', 'RAFT', 'Blender'],
-    image: '/projects/einsteinvision/comparison.webp',
-    imageAlt:
-      'Side-by-side comparison of the rendered 3D visualization and the real driving footage it was generated from',
+    image: '/projects/einsteinvision/seq6.webp',
+    imageAlt: 'A rainy street from a dash camera beside its EinsteinVision 3D reconstruction, with vehicles and bollards placed in the scene',
+    gallery: [
+      { src: '/projects/einsteinvision/seq6.mp4', caption: 'Output sequence: the camera frame and its reconstruction, frame by frame.' },
+      { src: '/projects/einsteinvision/detection.mp4', caption: 'Instance segmentation on highway traffic: each vehicle classified and masked.' },
+      { src: '/projects/einsteinvision/render.mp4', caption: 'The Blender reconstruction on its own: lanes, vehicles and traffic lights.' },
+      { src: '/projects/einsteinvision/seq1.webp', caption: 'Highway scene: vehicles, lanes and barriers placed in a metric 3D frame.' },
+      { src: '/projects/einsteinvision/comparison.webp', caption: 'Detection and reconstruction compared against the source video.' },
+      { src: '/projects/einsteinvision/lanes.webp', caption: 'Lane segmentation mask that drives the rendered lane geometry.' },
+    ],
     links: [
       {
         label: 'GitHub',
@@ -125,7 +149,12 @@ export const projects: Project[] = [
     metrics: ['Implemented from scratch', 'Bundle-adjusted'],
     tech: ['Python', 'OpenCV', 'NumPy', 'SciPy'],
     image: '/projects/sfm/hero.png',
+    fit: 'contain',
     imageAlt: 'Final 3D point cloud reconstruction with camera poses after bundle adjustment',
+    gallery: [
+      { src: '/projects/sfm/reconstruction.webp', caption: 'Reconstructed point cloud with registered camera poses, from three viewpoints.', fit: 'contain' },
+      { src: '/projects/sfm/bundle-adjustment.webp', caption: 'Scene and camera poses after bundle adjustment.', fit: 'contain' },
+    ],
     links: [
       {
         label: 'GitHub',
@@ -237,6 +266,7 @@ export const projects: Project[] = [
     metrics: ['GPS + odometry fusion'],
     tech: ['MATLAB', 'State estimation'],
     image: '/projects/ekf/hero.png',
+    fit: 'contain',
     imageAlt:
       'Trajectory plot comparing GPS observations, odometry-only estimate, EKF localization, and ground truth',
     links: [],
@@ -258,6 +288,7 @@ export const projects: Project[] = [
     metrics: ['Classical vs learned', 'Supervised + unsupervised'],
     tech: ['Python', 'PyTorch', 'OpenCV', 'RANSAC'],
     image: '/projects/autopano/pipeline.webp',
+    fit: 'contain',
     imageAlt:
       'The MyAutoPano pipeline cycling through Harris corner detection, RANSAC feature matching, and the final stitched panorama',
     links: [{ label: 'GitHub', href: 'https://github.com/Prasham2181/My_AutoPano' }],
@@ -278,8 +309,12 @@ export const projects: Project[] = [
       'Cleaner object boundaries than the Canny and Sobel baselines, with texture edges suppressed, and a side-by-side view of how each backbone change affects accuracy and training behaviour.',
     metrics: ['3 filter banks', '5 CNN backbones'],
     tech: ['Python', 'OpenCV', 'PyTorch', 'NumPy'],
-    image: '/projects/pblite/hero.webp',
-    imageAlt: 'pb-lite boundary map of a butterfly on a flower, edges in white on black',
+    image: '/projects/pblite/texton.webp',
+    imageAlt: 'Texton map of a butterfly on a flower, each texture cluster in a different colour',
+    gallery: [
+      { src: '/projects/pblite/hero.webp', caption: 'Final pb-lite boundary map: object edges kept, texture suppressed.' },
+      { src: '/projects/pblite/filterbank.webp', caption: 'Leung-Malik filter bank: oriented derivatives, Laplacians and Gaussians.', fit: 'contain' },
+    ],
     links: [
       {
         label: 'GitHub',
@@ -304,27 +339,12 @@ export const projects: Project[] = [
     metrics: ['Mean ATE 0.24 m (IO)', '9 trajectories', 'Geodesic loss'],
     tech: ['PyTorch', 'Blender', 'LSTM', 'Attention', 'Python'],
     image: '/projects/deep-vio/hero.webp',
+    fit: 'contain',
     imageAlt: 'A simulated quadrotor with a downward camera flying over a textured city-image plane in Blender',
-    links: [],
-  },
-  {
-    slug: 'safeceil',
-    title: 'SafeCeil: Radar Fall Detection',
-    summary:
-      'A ceiling-mounted mmWave radar that detects falls without a camera and alerts staff in under a second.',
-    dates: 'Spring 2025',
-    context: 'WPI · Directed research · with Brijan Vaghasiya and Eli Breitbart Frischling',
-    domains: ['Robotics', 'Perception'],
-    problem:
-      'In care facilities a resident who falls unseen can wait more than 12 minutes for help. Wearables go unworn, cameras raise privacy concerns and fail in the dark, and pressure mats only cover the bed.',
-    approach:
-      'One 60 GHz mmWave radar (DFRobot C1001) per room, mounted on the ceiling and read by an ESP32 over UART. Each scan is compared with the last, and a fall is flagged only when a sharp downward motion and a critical body-tilt angle occur together. A fall sounds an on-board buzzer and turns that room red on a control-room dashboard, with the room ID passed on for a humanoid robot to respond.',
-    result:
-      'Alerts reach the buzzer and dashboard within a second, falls are detected even when the person stays still afterwards, and no camera or microphone is involved. One ceiling unit covers a standard room (11 m range, 100° by 100° field of view).',
-    metrics: ['≤ 1 s alert', 'No camera', '60 GHz mmWave'],
-    tech: ['ESP32', 'mmWave radar', 'Arduino C++', 'Embedded'],
-    image: '/projects/safeceil/hero.webp',
-    imageAlt: 'The SafeCeil radar unit mounted on an office ceiling tile next to an air vent',
+    gallery: [
+      { src: '/projects/deep-vio/results.webp', caption: 'Estimated against ground-truth trajectories for the IO, VO and VIO networks.', fit: 'contain' },
+      { src: '/projects/deep-vio/architecture.webp', caption: 'Inertial odometry network: bidirectional LSTM over IMU windows.', fit: 'contain' },
+    ],
     links: [],
   },
   {
@@ -344,8 +364,12 @@ export const projects: Project[] = [
     metrics: ['4 IK solvers', 'Meta Quest 2', 'Unity + ROS + MATLAB'],
     tech: ['MATLAB', 'ROS', 'Unity', 'Meta Quest 2', 'PSO'],
     image: '/projects/ik-benchmark/hero.webp',
+    fit: 'contain',
     imageAlt:
       'Bar charts comparing completion time, cumulative joint distance and weighted joint-angle change for Newton-Raphson, I-DLS, SVD-DLS and PSO',
+    gallery: [
+      { src: '/projects/ik-benchmark/architecture.webp', caption: 'VR-to-robot pipeline: Unity on a Meta Quest 2, ROS TCP Connector, MATLAB IK node.', fit: 'contain' },
+    ],
     links: [{ label: 'Report', href: '/reports/ik-solver-benchmark.pdf' }],
   },
   {
@@ -364,8 +388,14 @@ export const projects: Project[] = [
       'Straight-line Cartesian motion on the real arm, and a PD controller tuned to Kp = 0.19, Kd = 0.03 that converged quickly with minimal overshoot on all three reference steps (930 to 2000, 2180 to 1500, 930 to 1800 encoder units), logged for 10 s at 100 Hz.',
     metrics: ['PD at 100 Hz', 'Kp 0.19 · Kd 0.03', 'Jacobian pseudoinverse'],
     tech: ['ROS 2', 'Python', 'OpenManipulator-X', 'DYNAMIXEL'],
-    image: '/projects/ros2-arm/hero.webp',
-    imageAlt: 'The OpenManipulator-X arm holding a red object above a checkerboard on a desk',
+    image: '/projects/ros2-arm/desk.webp',
+    imageAlt: 'The OpenManipulator-X arm on a desk above a calibration checkerboard',
+    gallery: [
+      { src: '/projects/ros2-arm/hero.webp', caption: 'Pick-and-place driven by the inverse kinematics service.' },
+      { src: '/projects/ros2-arm/gripper.webp', caption: 'Joint configurations used to validate forward kinematics against the measured pose.' },
+      { src: '/projects/ros2-arm/pd-step.webp', caption: 'PD step response on actuator 4: 930 to 2000 encoder units.', fit: 'contain' },
+      { src: '/projects/ros2-arm/linear-path.webp', caption: 'Straight-line Cartesian motion from velocity-level kinematics.', fit: 'contain' },
+    ],
     links: [
       { label: 'FK / IK report', href: '/reports/rbe500-fk-ik.pdf' },
       { label: 'Velocity kinematics report', href: '/reports/rbe500-velocity-kinematics.pdf' },

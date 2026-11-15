@@ -29,33 +29,31 @@ function DomainTags({ project, className = '' }: { project: Project; className?:
   )
 }
 
-function Media({ project, className = '', cover = true }: { project: Project; className?: string; cover?: boolean }) {
-  const isVideo = /\.(mp4|webm)$/i.test(project.image)
-  const fit = cover ? 'object-cover' : 'object-contain'
+function MediaView({
+  src,
+  alt,
+  fit = 'cover',
+  className = '',
+}: {
+  src: string
+  alt: string
+  fit?: 'cover' | 'contain'
+  className?: string
+}) {
+  const isVideo = /\.(mp4|webm)$/i.test(src)
+  // figures (plots, diagrams) are never cropped and sit on white; photos fill the frame
+  const frame = fit === 'contain' ? 'bg-white' : 'bg-neutral-900'
+  const cls = `absolute inset-0 h-full w-full ${fit === 'contain' ? 'object-contain p-2' : 'object-cover'}`
   return (
-    <div className={`relative overflow-hidden bg-black ${className}`}>
-      {project.image ? (
+    <div className={`relative overflow-hidden ${frame} ${className}`}>
+      {src ? (
         isVideo ? (
-          <video
-            src={project.image}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            aria-label={project.imageAlt}
-            className={`absolute inset-0 h-full w-full ${fit}`}
-          />
+          <video src={src} autoPlay loop muted playsInline preload="metadata" aria-label={alt} className={cls} />
         ) : (
-          <img
-            src={project.image}
-            alt={project.imageAlt}
-            loading="lazy"
-            className={`absolute inset-0 h-full w-full ${fit}`}
-          />
+          <img src={src} alt={alt} loading="lazy" decoding="async" className={cls} />
         )
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-(--color-text)/8 to-(--color-text)/20">
+        <div className="absolute inset-0 flex items-center justify-center bg-(--color-accent-soft)">
           <span className="font-mono text-[10px] tracking-widest text-(--color-text-muted) uppercase">
             No preview
           </span>
@@ -73,7 +71,12 @@ function Card({ project, onOpen }: { project: Project; onOpen: () => void }) {
       onClick={onOpen}
       className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-bg-raised) text-left transition-[border-color,scale] duration-150 hover:border-(--color-text-muted) active:scale-[0.99]"
     >
-      <Media project={project} cover={false} className="aspect-[16/10] w-full border-b border-(--color-border)" />
+      <MediaView
+        src={project.image}
+        alt={project.imageAlt}
+        fit={project.fit}
+        className="aspect-[16/10] w-full border-b border-(--color-border) [&_img]:transition-transform [&_img]:duration-500 group-hover:[&_img]:scale-[1.03]"
+      />
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center justify-between gap-3">
           <DomainTags project={project} />
@@ -119,6 +122,50 @@ function Field({ label, body }: { label: string; body: string }) {
   )
 }
 
+/** The case-study media: the lead image plus any gallery items, with a thumbnail strip. */
+function Gallery({ project }: { project: Project }) {
+  const items = [
+    { src: project.image, caption: project.imageAlt, fit: project.fit },
+    ...(project.gallery ?? []).map((g) => ({ ...g, fit: g.fit })),
+  ].filter((i) => i.src)
+  const [index, setIndex] = useState(0)
+  const current = items[index] ?? items[0]
+  if (!current) return null
+
+  return (
+    <div className="shrink-0">
+      <MediaView
+        key={current.src}
+        src={current.src}
+        alt={current.caption}
+        fit={current.fit ?? 'contain'}
+        className="aspect-[16/10] w-full"
+      />
+      <p className="px-6 pt-3 text-[12px] leading-snug text-(--color-text-muted) sm:px-8">{current.caption}</p>
+      {items.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto px-6 pt-3 sm:px-8">
+          {items.map((item, i) => (
+            <button
+              key={item.src}
+              type="button"
+              onClick={() => setIndex(i)}
+              aria-label={`Show media ${i + 1}: ${item.caption}`}
+              aria-pressed={i === index}
+              className={`relative h-12 w-[4.5rem] shrink-0 overflow-hidden rounded-md border transition-[border-color,opacity] duration-150 ${
+                i === index
+                  ? 'border-(--color-text) opacity-100'
+                  : 'border-(--color-border) opacity-60 hover:opacity-100'
+              }`}
+            >
+              <MediaView src={item.src} alt="" fit={item.fit ?? 'cover'} className="h-full w-full" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -161,7 +208,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         <div className="grid lg:grid-cols-[0.92fr_1.08fr]">
           {/* left: the artifact and the facts */}
           <div className="flex flex-col border-b border-(--color-border) lg:border-r lg:border-b-0">
-            <Media project={project} cover={false} className="aspect-[16/10] w-full shrink-0" />
+            <Gallery project={project} />
 
             <div className="flex flex-1 flex-col p-6 sm:p-8">
               <DomainTags project={project} />

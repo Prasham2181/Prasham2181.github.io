@@ -31,6 +31,12 @@ Tags `Robotics`, `Perception`, `Robotics AI`, `Controls` (`Domain` in `projects.
 ## Adding content
 
 - Project: add to `projects` in `src/data/projects.ts` with `domains`, one-line `summary`, `problem`, `approach`, `result`, optional `metrics`. `image: ''` renders a placeholder.
+  - `image` is the card thumbnail: prefer a real photo, render or output frame over a plot (plots made the site read as coursework). Cards fill the frame (`object-cover`); set `fit: 'contain'` for plots/diagrams so they sit uncropped on white.
+  - `gallery` adds more media (images or short muted `.mp4` clips) shown as a thumbnail strip in the case-study modal. Keep clips around 8 s, 960 px wide, no audio.
+  - **No identifiable faces** in any project media (fall-detection demo and most front-camera MemFlow frames were skipped for this).
+- Removed by request: SafeCeil fall detection ("dumb and useless"), the RBE501 dynamics and RBE502 quadrotor cards (no media). Don't re-add.
+- Hero has no background photo (a washed desk photo read as muddy); the background is the `.page-dots` plate only.
+- Raw media for projects lives on this PC: `D:\Projects\WPI_Random_Projects` (EinsteinVision clips S*_trim, output_video, VIO talk), `Desktop/For Github/EV` (EinsteinVision phases), `Desktop/Prasham Soni/Ayna_raft_AWS/ayna-memflow` (MemFlow frames), `Desktop/WPI/Humanoid_project/renders`.
 - Experience: add to `experience` in `src/data/experience.ts` with `logo`, `headline`, `stack`, optional `stats`.
 
 ## Copy register (important)
