@@ -10,7 +10,6 @@ import { Contact } from './components/Contact'
 function App() {
   return (
     <MotionConfig reducedMotion="user">
-      <div className="page-dots" aria-hidden="true" />
       <div className="min-h-screen">
         <Nav />
         <main>

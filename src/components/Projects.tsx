@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUpRight, ExternalLink, X } from 'lucide-react'
+import { ExternalLink, X } from 'lucide-react'
 import { projects, domainFilters, domainColor, type Domain, type Project } from '../data/projects'
 import { Section } from './Section'
+import { GithubIcon } from './icons'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -42,8 +43,8 @@ function MediaView({
 }) {
   const isVideo = /\.(mp4|webm)$/i.test(src)
   // figures (plots, diagrams) are never cropped and sit on white; photos fill the frame
-  const frame = fit === 'contain' ? 'bg-white' : 'bg-neutral-900'
-  const cls = `absolute inset-0 h-full w-full ${fit === 'contain' ? 'object-contain p-2' : 'object-cover'}`
+  const frame = fit === 'contain' ? 'bg-white' : 'bg-(--color-accent-soft)'
+  const cls = `absolute inset-0 h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'}`
   return (
     <div className={`relative overflow-hidden ${frame} ${className}`}>
       {src ? (
@@ -63,47 +64,54 @@ function MediaView({
   )
 }
 
-/** One project card: media on top, then tags, title, summary, stack. */
+/** One project card, after the reference site: media fills a 16:10 frame, tags ride on it, three short lines below. */
 function Card({ project, onOpen }: { project: Project; onOpen: () => void }) {
+  const repo = project.links.find((l) => /github\.com/.test(l.href))
+  const year = project.dates.split('–').pop()?.trim()
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-bg-raised) text-left transition-[border-color,scale] duration-150 hover:border-(--color-text-muted) active:scale-[0.99]"
-    >
-      <MediaView
-        src={project.image}
-        alt={project.imageAlt}
-        fit={project.fit}
-        className="aspect-[16/10] w-full border-b border-(--color-border) [&_img]:transition-transform [&_img]:duration-500 group-hover:[&_img]:scale-[1.03]"
-      />
-      <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-center justify-between gap-3">
-          <DomainTags project={project} />
-          <span className="shrink-0 font-mono text-[11px] text-(--color-text-muted) tabular-nums">
-            {project.dates.split('–').pop()?.trim()}
-          </span>
-        </div>
-        <h3 className="mt-3 flex items-start justify-between gap-3 text-lg leading-snug font-semibold tracking-tight text-(--color-text)">
-          {project.title}
-          <ArrowUpRight
-            size={16}
-            className="mt-1 shrink-0 text-(--color-text-muted) transition-[color,translate] duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--color-brand)"
-          />
-        </h3>
-        <p className="mt-2 text-sm leading-relaxed text-pretty text-(--color-text-muted)">{project.summary}</p>
-        <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
-          {project.tech.slice(0, 4).map((t) => (
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-bg-raised) transition-colors duration-150 hover:bg-(--color-accent-soft)">
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <MediaView src={project.image} alt={project.imageAlt} fit={project.fit} className="h-full w-full" />
+        <div className="pointer-events-none absolute top-2 left-2 z-10 flex flex-wrap gap-1.5">
+          {project.domains.map((d) => (
             <span
-              key={t}
-              className="rounded-md bg-(--color-accent-soft) px-2 py-1 font-mono text-[10px] text-(--color-text-muted)"
+              key={d}
+              style={{ color: domainColor[d] }}
+              className="rounded-full border border-(--color-border) bg-(--color-bg-raised)/95 px-2 py-0.5 text-[10px] font-medium"
             >
-              {t}
+              {d}
             </span>
           ))}
         </div>
+        {repo && (
+          <a
+            href={repo.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${project.title} on GitHub`}
+            className="absolute top-2 right-2 z-20 inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg-raised)/95 px-2 py-1 text-[10px] font-medium text-(--color-text) hover:text-(--color-brand)"
+          >
+            <GithubIcon size={11} /> GitHub
+          </a>
+        )}
       </div>
-    </button>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="px-3.5 py-3 text-left after:absolute after:inset-0 after:content-['']"
+        aria-label={`Open case study: ${project.title}`}
+      >
+        <p className="mb-1 line-clamp-1 text-[11px] font-medium tracking-wider text-(--color-text-muted) uppercase">
+          {project.context}
+        </p>
+        <h3 className="line-clamp-2 text-sm leading-snug font-semibold tracking-tight text-(--color-text) transition-colors group-hover:text-(--color-brand) md:text-[15px]">
+          {project.title}
+        </h3>
+        <p className="mt-1 line-clamp-1 text-[12px] leading-snug text-(--color-text-muted)">
+          {project.metrics?.[0] ?? project.tech.slice(0, 2).join(' · ')} · <span className="tabular-nums">{year}</span>
+        </p>
+      </button>
+    </div>
   )
 }
 
@@ -127,7 +135,7 @@ function Gallery({ project }: { project: Project }) {
   const items = [
     { src: project.image, caption: project.imageAlt, fit: project.fit },
     ...(project.gallery ?? []).map((g) => ({ ...g, fit: g.fit })),
-  ].filter((i) => i.src)
+  ].filter((i, n, all) => i.src && all.findIndex((j) => j.src === i.src) === n)
   const [index, setIndex] = useState(0)
   const current = items[index] ?? items[0]
   if (!current) return null
@@ -324,7 +332,7 @@ export function Projects() {
         })}
       </div>
 
-      <ul className="grid gap-4 md:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
         {visible.map((project) => (
           <li key={project.slug}>
             <Card project={project} onOpen={() => setSelected(project)} />

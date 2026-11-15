@@ -23,7 +23,7 @@ export const experience: ExperienceEntry[] = [
     company: 'Tesla',
     role: 'Robotics Intern',
     location: 'Fremont, CA',
-    dates: 'Jan 2026 – May 2026',
+    dates: 'Jan 2026 – Present',
     logo: '/logos/tesla.png',
     logoScale: 0.78,
     headline: '3D perception and vision-guided manipulation for autonomous pick-and-place.',
@@ -45,8 +45,8 @@ export const experience: ExperienceEntry[] = [
     headline: 'Real-time optical-flow motion perception for autonomous vehicles, plus vision-guided manipulation.',
     stats: ['48% faster inference', 'Controls Integration Lead'],
     bullets: [
-      'Developed a real-time motion perception system using RAFT and MemFlowNet optical flow (PyTorch, OpenCV, CUDA on AWS) for tugger AGVs, achieving 48% faster inference and enabling automated motion classification, downtime tracking and event subclassification.',
-      'Built a vision-guided robotic manipulation pipeline for FANUC arms using Keyence multi-camera systems: 3D object localization, camera-to-robot frame transformations, and motion execution.',
+      'Developed a real-time RAFT / MemFlowNet-based optical-flow motion perception system (PyTorch, OpenCV, CUDA on AWS) for tuggers and AGVs; achieved 48% faster inference throughput and enabled automated motion classification, downtime tracking, and event-type subclassification for root-cause analysis.',
+      'Built a vision-guided robotic manipulation pipeline for FANUC arms using Python and Keyence multi-camera systems; implemented 3D object localization, camera-to-robot frame transformations, and motion execution for precise robotic handling.',
       'Served as Controls Integration Lead for the R2 Front-End Module line, owning controls architecture, PLC and HMI validation, and safety systems.',
     ],
     stack: ['RAFT / MemFlowNet', 'PyTorch', 'CUDA', 'AWS', 'FANUC', 'Keyence vision'],
@@ -62,7 +62,7 @@ export const experience: ExperienceEntry[] = [
     stats: ['Closed-loop vision control'],
     bullets: [
       'Developed real-time vision pipelines for object detection and pose-based alignment in Python and OpenCV, enabling autonomous robotic screwing and pick-and-place in a closed-loop system.',
-      'Integrated perception output with KUKA robots via Beckhoff TwinCAT and HMI interfaces, coordinating robots, grippers and sensors over EtherCAT and Modbus.',
+      'Integrated perception outputs with KUKA robots through Beckhoff TwinCAT to support vision-guided motion and process execution.',
     ],
     stack: ['OpenCV', 'Pose alignment', 'KUKA', 'TwinCAT', 'EtherCAT'],
   },
@@ -81,7 +81,7 @@ export const experience: ExperienceEntry[] = [
   },
   {
     company: 'ICUBE Technologies',
-    role: 'Robotics R&D Intern',
+    role: 'Robotics Research and Development Intern',
     location: 'Ahmedabad, India',
     dates: 'Jan 2023 – May 2023',
     logo: '/logos/icube.jpeg',
@@ -89,7 +89,7 @@ export const experience: ExperienceEntry[] = [
     headline: 'LiDAR SLAM and real-time vehicle tracking for electronic toll collection.',
     stats: ['22% faster processing', '40% lower system cost'],
     bullets: [
-      'Developed real-time vehicle tracking algorithms using 2D LiDAR, Hector SLAM and ROS 2, generating bitmap scene representations to compress stored data and extend retention for vehicle profiling.',
+      'Developed real-time vehicle tracking algorithms using Hector SLAM and ROS 2, generating bitmap-based scene representations to optimize storage, reduce data size, and extend retention for toll collection and vehicle profiling systems.',
       'Optimized the sensor configuration and processing chain, cutting toll processing time by 22% and system cost by 40%.',
     ],
     stack: ['2D LiDAR', 'Hector SLAM', 'ROS 2', 'Vehicle tracking'],

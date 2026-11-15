@@ -7,7 +7,7 @@ React + TypeScript + Vite + Tailwind CSS v4. Single-page scroll portfolio.
 The site was rebuilt to be **clean and light**, modelled on https://aryanshah.work/ (by user request). The earlier "awwwards" build was removed for draining memory and not working well: the canvas optical-flow hero (`FlowField`), the perception photo slideshow (`PerceptionScene` + `public/perception/`), the DETECT overlay mode, the boot `Loader`, the film `Grain`, Lenis smooth scroll, and the `Words` / `Scramble` / `Magnetic` / `ScanReveal` effects. **Do not reintroduce canvas loops, rAF effects, overlays, loaders or scroll hijacking.**
 
 Look, taken from the reference:
-- Flat white background (`#fff`), ink text (`#0a0a0a`, muted `#404040`), hairline borders (`#e8e8e8`). Dark mode kept as a toggle.
+- Flat white background (`#fff`), ink text (`#0a0a0a`, muted `#404040`), hairline borders (`#e8e8e8`). **Light by default** (like the reference, which is light-only); dark only if the visitor toggles it (`index.html` script + `useTheme.ts`). No background grid or dot plate (removed by request).
 - One accent, `--color-brand` (deep crimson `#960d26`, `#fb7185` in dark), used for section labels and link hovers only.
 - Font: **Geist** (`@fontsource/geist`) for everything; JetBrains Mono 400 for small metadata.
 - **Centered `max-w-5xl` column** with `px-5 sm:px-8`. (This replaces the old full-width rule.)
@@ -18,9 +18,9 @@ Look, taken from the reference:
 
 - `src/data/*.ts`: all content (profile, experience, projects, awards, publications). Edit these to update the site.
 - `src/components/*.tsx`: Hero, About, Journey, Projects, Recognition, Contact, plus `Section`, `Nav`, `ThemeToggle`, `icons`, `motion`.
-- Order: Hero (type-only: role line, name, punchline, tagline, View projects + Résumé, status) → About → Experience (`Journey.tsx`, `#journey`) → Projects → Awards (`Recognition.tsx`) → Contact.
+- Order: Hero → About → Experience (`Journey.tsx`, `#journey`) → Projects → Awards (`Recognition.tsx`) → Contact.
 - `Journey.tsx` merges `experience.ts` with `education` from `profile.ts`, sorted by the first "Mon YYYY" in `dates`. Logos sit on white plates (`logoScale` per entry balances square marks against wordmarks).
-- `Projects.tsx`: domain filter pills over a 2-column card grid (`Card`: media, domain pills, year, title, summary, 4 tech chips). A card opens the case-study modal (Problem / Approach / Result + metric chips).
+- `Projects.tsx`: filter pills over a **1/2/3-column grid of compact cards copied from the reference**: 16:10 media filling the frame, domain chips overlaid top-left, GitHub chip top-right, then three short lines (uppercase `context`, title, first metric · year). No summary or tech chips on cards; that detail is in the case-study modal (media gallery + Problem / Approach / Result). Card leads should MOVE where the project has motion (animated WebP or muted mp4): the user complained when animated leads were swapped for stills.
 - `src/hooks/useTheme.ts`: dark/light, persisted to `localStorage`.
 - `public/projects/<slug>/`: project media, referenced by absolute path in `projects.ts`. `public/logos/`: company logos. `public/Prasham_Soni_Resume.pdf`.
 
@@ -35,7 +35,7 @@ Tags `Robotics`, `Perception`, `Robotics AI`, `Controls` (`Domain` in `projects.
   - `gallery` adds more media (images or short muted `.mp4` clips) shown as a thumbnail strip in the case-study modal. Keep clips around 8 s, 960 px wide, no audio.
   - **No identifiable faces** in any project media (fall-detection demo and most front-camera MemFlow frames were skipped for this).
 - Removed by request: SafeCeil fall detection ("dumb and useless"), the RBE501 dynamics and RBE502 quadrotor cards (no media). Don't re-add.
-- Hero background: an Unsplash industrial robot-cell photo (`public/hero/`, credit in `public/hero/CREDITS.md`), faded under gradients into the page colour, Aryan-style, by user request. A washed photo of the user's own desk was tried first and read as muddy. The rest of the page uses the `.page-dots` plate.
+- **Hero = the reference site's hero, structure copied exactly** (user: "Aryan's photo is perfectly placed"): a full-bleed illustrated web backdrop (`public/hero/sunset-*.webp`, Unsplash illustration by Sadat Alam Protik, credited in `public/hero/CREDITS.md`) at `opacity-[0.54]` under two gradients into the page colour, then a grid: copy left ("Hi, I'm Prasham Soni." with the name in brand crimson, punchline, tagline, CTAs) and a captioned personal photo card right (`me-rivian.webp`, 4:5, warm duotone). Rejected first: a stock robot-cell photo ("looks bad", wanted something abstract with personality) and the user's photo washed across the right half ("looks so bad"). When the user says "like Aryan", replicate his structure rather than improvising.
 - Raw media for projects lives on this PC: `D:\Projects\WPI_Random_Projects` (EinsteinVision clips S*_trim, output_video, VIO talk), `Desktop/For Github/EV` (EinsteinVision phases), `Desktop/Prasham Soni/Ayna_raft_AWS/ayna-memflow` (MemFlow frames), `Desktop/WPI/Humanoid_project/renders`.
 - Experience: add to `experience` in `src/data/experience.ts` with `logo`, `headline`, `stack`, optional `stats`.
 
@@ -58,4 +58,4 @@ Old Google Sites portfolio (https://sites.google.com/view/prashamsoni/home, /pro
 - No GIFs on the site: animated media is animated WebP (max 960px). Drop a new GIF into `public/projects/<slug>/`, run `npm run optimize:media`, point `projects.ts` at the `.webp` and delete the GIF.
 - `Assets/` (848 MB raw media) is tracked in git; consider untracking or git-lfs.
 - `robot-dynamics` (RBE501) and `quadrotor-control` (RBE502) have no image yet; sources are under `Desktop/WPI/Sem2_spring_2025/Robot Dynamics` and `Desktop/WPI/Sem1_fall_2024/Robot_control`. Project source folders on this PC: `Desktop/WPI/Humanoid_project`, `Desktop/Fall 2025/Advanced_robot_navigation`, `Desktop/For Github/*`, `Desktop/WPI/PEAR_Lab/*`.
-- Flipkart Grid (warehouse) has no still image. Tesla internship ended May 2026.
+- Flipkart Grid (warehouse) has no still image. Experience text mirrors the CV `CV_Prasham_Soni_vision_robo_28_4_2026.pdf` (user: "that is the new resume"), including Tesla as Jan 2026 – Present. Reliance, Nutron and the Rivian Controls Integration Lead bullet come from the old site and are kept.

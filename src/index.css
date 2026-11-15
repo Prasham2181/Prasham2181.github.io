@@ -17,7 +17,6 @@
   --color-accent: #0a0a0a;
   --color-accent-soft: #f0f0f0;
   --color-brand: #960d26;
-  --color-dots: #d4b4ba;
 
   --color-perception: #b91c1c;
   --color-perception-soft: #fdecec;
@@ -38,7 +37,6 @@
   --color-accent: #ededec;
   --color-accent-soft: rgba(255, 255, 255, 0.07);
   --color-brand: #fb7185;
-  --color-dots: #5a3a42;
 
   --color-perception: #f87171;
   --color-perception-soft: rgba(248, 113, 113, 0.14);
@@ -111,20 +109,4 @@ h3 {
   outline: 2px solid var(--color-text);
   outline-offset: 3px;
   border-radius: 2px;
-}
-
-/* Fixed dot plate behind everything, fading out from the top of the viewport. */
-.page-dots {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  opacity: 0.35;
-  background-image: radial-gradient(var(--color-dots) 1px, transparent 1px);
-  background-size: 3px 3px;
-  -webkit-mask-image: radial-gradient(80vh at 50% 0%, #000 0, transparent 100%);
-  mask-image: radial-gradient(80vh at 50% 0%, #000 0, transparent 100%);
-}
-.dark .page-dots {
-  opacity: 0.5;
 }
